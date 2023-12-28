@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/shopping_graphs"
+    app:startDestination="@id/homeFragment2">
+
+    <fragment
+        android:id="@+id/homeFragment2"
+        android:name="com.example.kelineyt.fragments.shopping.HomeFragment"
+        android:label="HomeFragment" >
+        <action
+            android:id="@+id/action_homeFragment2_to_productDetailsFragments"
+            app:destination="@id/productDetailsFragments" />
+    </fragment>
+    <fragment
+        android:id="@+id/productDetailsFragments"
+        android:name="com.example.kelineyt.fragments.makeIt.ProductDetailsFragments"
+        android:label="ProductDetailsFragments" >
+        <argument
+            android:name="products"
+            app:argType="com.example.kelineyt.data.Product" />
+    </fragment>
+</navigation>
