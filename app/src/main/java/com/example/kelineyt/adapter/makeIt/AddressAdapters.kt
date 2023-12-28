@@ -53,7 +53,7 @@ class AddressAdapters : RecyclerView.Adapter<AddressAdapters.AddressViewHolder>(
         val address = differ.currentList[position]
         holder.bind(address)
 //
-        if (selectedAddress >= 0) {
+        if (selectedAddress >= 0) { //
             notifyItemChanged(position)
         } else {
             selectedAddress = holder.adapterPosition
