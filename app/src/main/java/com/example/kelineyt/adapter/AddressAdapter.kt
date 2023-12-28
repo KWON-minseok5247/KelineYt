@@ -25,7 +25,8 @@ class AddressAdapter : Adapter<AddressAdapter.AddressViewHolder>() {
                 if (isSelected) {
                     buttonAddress.background = ColorDrawable(itemView.context.resources.getColor(R.color.g_blue))
                 } else {
-                    buttonAddress.background = ColorDrawable(itemView.context.resources.getColor(R.color.g_white))
+                    buttonAddress.background = ColorDrawable(itemView.context.resources.getColor(R.color.g_white)
+                    )
                 }
             }
         }
@@ -61,6 +62,7 @@ class AddressAdapter : Adapter<AddressAdapter.AddressViewHolder>() {
             notifyItemChanged(selectedAddress) // 그리고 selecteddAddress값이 변경되었으니 다시 onbindViewHolder를 실행해달라. 라는 뜻인듯????
             onClick?.invoke(address)
         }
+
     }
 
     init {

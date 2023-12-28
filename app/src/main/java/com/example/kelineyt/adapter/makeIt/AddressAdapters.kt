@@ -2,6 +2,7 @@ package com.example.kelineyt.adapter.makeIt
 
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,14 +16,22 @@ import com.example.kelineyt.databinding.AddressRvItemBinding
 import com.example.kelineyt.databinding.SizeRvItemBinding
 
 class AddressAdapters : RecyclerView.Adapter<AddressAdapters.AddressViewHolder>() {
-    private var selectedAddress = -1
+
+    private var selectedPosition = -1
 
     inner class AddressViewHolder(val binding: AddressRvItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(address: Address) {
-            if (selectedAddress >= 0) {
+        fun bind(address: Address, position: Int) {
+            if (selectedPosition == position) {
                 binding.buttonAddress.text = address.addressTitle
-                binding.buttonAddress.background = ColorDrawable(itemView.resources.getColor(R.color.g_dark_blue))
+                binding.buttonAddress.background =
+                    ColorDrawable(itemView.context.resources.getColor(R.color.g_dark_blue))
+            } else {
+                binding.buttonAddress.text = address.addressTitle
+//                binding.buttonAddress.background =
+//                    ColorDrawable(R.drawable.unselected_button_background)
+                binding.buttonAddress.background = ColorDrawable(itemView.context.resources.getColor(R.color.g_white))
+
 
             }
 
@@ -51,18 +60,20 @@ class AddressAdapters : RecyclerView.Adapter<AddressAdapters.AddressViewHolder>(
 
     override fun onBindViewHolder(holder: AddressViewHolder, position: Int) {
         val address = differ.currentList[position]
-        holder.bind(address)
-//
-        if (selectedAddress >= 0) { //
-            notifyItemChanged(position)
-        } else {
-            selectedAddress = holder.adapterPosition
-            notifyItemChanged(position)
+        holder.bind(address, position)
+
+        holder.binding.buttonAddress.setOnClickListener {
+            if (selectedPosition >= 0) { // 이미 클릭되어 있던 포지션을 체크 해제하는 과정
+                notifyItemChanged(selectedPosition)
+            }
+            selectedPosition = holder.adapterPosition // 클릭한 포지션을 변경하는 과정
+            notifyItemChanged(selectedPosition)
+            onClick?.invoke(address)
         }
 
-
-
         holder.itemView.setOnClickListener {
+
+
 
         }
     }
