@@ -62,7 +62,7 @@ class BillingFragment : Fragment() {
 
         binding.tvTotalPrice.text = String.format("%.2f", totalPrice)
         billingCartProductRv()
-
+//t
         addressRv()
         lifecycleScope.launchWhenStarted {
             billingViewModels.address.collectLatest {
