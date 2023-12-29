@@ -77,6 +77,10 @@ class BillingAdapters : RecyclerView.Adapter<BillingAdapters.BillingViewHolder>(
     override fun onBindViewHolder(holder: BillingViewHolder, position: Int) {
         val cartProduct = differ.currentList[position]
         holder.bind(cartProduct)
+
+        holder.itemView.setOnClickListener {
+            onClick?.invoke(cartProduct)
+        }
     }
 
     override fun getItemCount(): Int {

@@ -87,6 +87,9 @@
         <argument
             android:name="payment"
             app:argType="boolean" />
+        <action
+            android:id="@+id/action_billingFragment_to_productDetailsFragment"
+            app:destination="@id/productDetailsFragment" />
     </fragment>
     <fragment
         android:id="@+id/userAccountFragment"

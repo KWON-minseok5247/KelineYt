@@ -12,6 +12,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -88,6 +89,7 @@ class ProductDetailsFragment: Fragment() {
             Toast.makeText(requireContext(),"물건이 카트에 추가되었습니다.", Toast.LENGTH_SHORT).show()
         }
         binding.imageClose.setOnClickListener {
+            findNavController().navigateUp()
 
         }
 

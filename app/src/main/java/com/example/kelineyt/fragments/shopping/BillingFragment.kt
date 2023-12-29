@@ -84,6 +84,14 @@ class BillingFragment : Fragment() {
             Log.e("selectedAddress",selectedAddress.toString())
         }
 
+        billingAdapters.onClick = {
+            val b = Bundle().apply {
+                putParcelable("product", it.product)
+            }
+            findNavController().navigate(R.id.productDetailsFragment, b)
+        }
+
+
         //선택을 했을 때 연파란색 나머지는 흰색
 
 

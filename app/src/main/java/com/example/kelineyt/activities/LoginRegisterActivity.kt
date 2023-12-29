@@ -2,6 +2,7 @@ package com.example.kelineyt.activities
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.example.kelineyt.BuildConfig
 import com.example.kelineyt.R
 import dagger.hilt.android.AndroidEntryPoint
 
