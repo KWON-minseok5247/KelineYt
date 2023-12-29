@@ -31,11 +31,7 @@ class AddressAdapters : RecyclerView.Adapter<AddressAdapters.AddressViewHolder>(
 //                binding.buttonAddress.background =
 //                    ColorDrawable(R.drawable.unselected_button_background)
                 binding.buttonAddress.background = ColorDrawable(itemView.context.resources.getColor(R.color.g_white))
-
-
             }
-
-
         }
     }
 
@@ -65,9 +61,12 @@ class AddressAdapters : RecyclerView.Adapter<AddressAdapters.AddressViewHolder>(
         holder.binding.buttonAddress.setOnClickListener {
             if (selectedPosition >= 0) { // 이미 클릭되어 있던 포지션을 체크 해제하는 과정
                 notifyItemChanged(selectedPosition)
+                notifyItemChanged(differ.currentList.lastIndex)
             }
             selectedPosition = holder.adapterPosition // 클릭한 포지션을 변경하는 과정
             notifyItemChanged(selectedPosition)
+            notifyItemChanged(differ.currentList.lastIndex)
+
             onClick?.invoke(address)
         }
 
