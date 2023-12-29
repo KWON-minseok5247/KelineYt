@@ -36,7 +36,7 @@ import kotlinx.coroutines.flow.collectLatest
 
 
 //TODO 주소를 새로 추가했을 때 기존의 position과 새로 추가되면서 한 줄씩 밀려난다. 그래서 2칸이 선택되는 현상이 발생
-// 클릭하기 전까지 사라지지 않는 문제가 발생
+// 클릭하기 전까지 사라지지 않는 문제가 발생 정확하게는 마지막 항목이 업데이트되지 않는다.
 @AndroidEntryPoint
 class BillingFragment : Fragment() {
     private val args : BillingFragmentArgs by navArgs()
@@ -115,6 +115,7 @@ class BillingFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         billingViewModels.getAddressRv()
+
     }
 
     private fun addressRv() {

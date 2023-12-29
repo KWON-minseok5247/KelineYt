@@ -13,7 +13,9 @@ import androidx.navigation.NavArgs
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.kelineyt.R
+import com.example.kelineyt.adapter.makeIt.AddressAdapters
 import com.example.kelineyt.data.Address
+import com.example.kelineyt.databinding.AddressRvItemBinding
 import com.example.kelineyt.databinding.FragmentAddressBinding
 import com.example.kelineyt.util.Resource
 import com.example.kelineyt.viewmodel.AddressViewModel
@@ -27,7 +29,7 @@ import kotlinx.coroutines.launch
 class AddressFragment: Fragment() {
     lateinit var binding: FragmentAddressBinding
     private val viewModel by viewModels<AddressViewModels>()
-
+    private val addressAdapters by lazy { AddressAdapters() }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -53,8 +55,11 @@ class AddressFragment: Fragment() {
 
             val address = Address(addressTitle, fullName, street, phone, city, state)
             viewModel.saveAddress(address)
+
             findNavController().navigateUp()
-//            findNavController().navigate(R.id.billingFragment)
+            // 여기서 뭔가를 해야 하지 않을까?5
+            
+
         }
 
 

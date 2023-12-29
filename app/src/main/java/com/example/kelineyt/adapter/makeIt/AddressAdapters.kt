@@ -71,11 +71,6 @@ class AddressAdapters : RecyclerView.Adapter<AddressAdapters.AddressViewHolder>(
             onClick?.invoke(address)
         }
 
-        holder.itemView.setOnClickListener {
-
-
-
-        }
     }
 
     override fun getItemCount(): Int {
