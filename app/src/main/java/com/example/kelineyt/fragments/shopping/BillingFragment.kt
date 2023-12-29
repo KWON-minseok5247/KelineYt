@@ -33,6 +33,7 @@ import com.example.kelineyt.viewmodel.makeIt.BillingViewModels
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
+import java.util.Date
 
 
 //TODO 주소를 새로 추가했을 때 기존의 position과 새로 추가되면서 한 줄씩 밀려난다. 그래서 2칸이 선택되는 현상이 발생
@@ -115,6 +116,12 @@ class BillingFragment : Fragment() {
 
         binding.imageAddAddress.setOnClickListener {
             findNavController().navigate(R.id.action_billingFragment_to_addressFragment)
+        }
+
+        binding.buttonPlaceOrder.setOnClickListener {
+            // 여기에 들어갈 데이터는 선택한 Address, Total price, CartProducts
+            // 따로 만들어야 할 데이터는 언제 주문했는지? 주문 상태 ex) Canceled, Ordered 등등, 주문번호!!!!
+            val order = Order("Ordered",totalPrice,args.products.toList(),selectedAddress,)
         }
 
 
