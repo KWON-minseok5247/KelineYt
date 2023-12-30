@@ -1,7 +1,10 @@
 package com.example.kelineyt.fragments.shopping
 
 import android.app.AlertDialog
+import android.content.DialogInterface
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -32,6 +35,7 @@ import com.example.kelineyt.viewmodel.makeIt.AddressViewModels
 import com.example.kelineyt.viewmodel.makeIt.BillingViewModels
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Delay
 import kotlinx.coroutines.flow.collectLatest
 import java.util.Date
 
@@ -45,7 +49,7 @@ class BillingFragment : Fragment() {
     private val billingAdapters by lazy { BillingAdapters() }
     private val addressAdapters by lazy { AddressAdapters() }
     private val billingViewModels by viewModels<BillingViewModels>()
-    lateinit var selectedAddress : Address
+    private var selectedAddress : Address? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -63,7 +67,6 @@ class BillingFragment : Fragment() {
 
         binding.tvTotalPrice.text = String.format("%.2f", totalPrice)
         billingCartProductRv()
-//t
         addressRv()
         lifecycleScope.launchWhenStarted {
             billingViewModels.address.collectLatest {
@@ -80,6 +83,29 @@ class BillingFragment : Fragment() {
                 }
             }
         }
+
+        lifecycleScope.launchWhenStarted {
+            billingViewModels.order.collectLatest {
+                when (it) {
+                    is Resource.Loading -> {
+                        binding.buttonPlaceOrder.startAnimation()
+                        Log.e("시작","버튼 굴러가기 시작")
+                    }
+                    is Resource.Success -> {
+                        binding.buttonPlaceOrder.revertAnimation()
+                        Log.e("끝","버튼 굴러가기 끝")
+
+                    }
+                    is Resource.Error -> {
+                        binding.buttonPlaceOrder.revertAnimation()
+                        Toast.makeText(requireContext(),it.message.toString(),Toast.LENGTH_SHORT).show()
+                    }
+
+                    else -> Unit
+                }
+            }
+        }
+
         addressAdapters.onClick = {
             selectedAddress = it
             Log.e("selectedAddress",selectedAddress.toString())
@@ -95,25 +121,6 @@ class BillingFragment : Fragment() {
 
         //선택을 했을 때 연파란색 나머지는 흰색
 
-
-//        lifecycleScope.launchWhenStarted {
-//            addressViewModel.address.collectLatest {
-//                when (it) {
-//                    is Resource.Loading -> {
-//
-//                    }
-//                    is Resource.Success -> {
-//                        addressAdapters.differ.submitList(it.data)
-//                    }
-//                    is Resource.Error -> {
-//                        Toast.makeText(requireContext(),it.message.toString(),Toast.LENGTH_SHORT).show()
-//
-//                    }
-//                    else -> Unit
-//                }
-//            }
-//        }
-
         binding.imageAddAddress.setOnClickListener {
             findNavController().navigate(R.id.action_billingFragment_to_addressFragment)
         }
@@ -121,7 +128,29 @@ class BillingFragment : Fragment() {
         binding.buttonPlaceOrder.setOnClickListener {
             // 여기에 들어갈 데이터는 선택한 Address, Total price, CartProducts
             // 따로 만들어야 할 데이터는 언제 주문했는지? 주문 상태 ex) Canceled, Ordered 등등, 주문번호!!!!
-            val order = Order("Ordered",totalPrice,args.products.toList(),selectedAddress,)
+            if (selectedAddress == null) {
+                Toast.makeText(requireContext(),"Check your Address", Toast.LENGTH_SHORT).show()
+            } else {
+                val order = Order("Ordered",totalPrice,args.products.toList(),selectedAddress!!,)
+                val builder = androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                builder.setTitle("주문이 완료됩니다.")
+                    .setMessage("정말로 주문하시겠습니까?")
+                    .setPositiveButton("확인",
+                        DialogInterface.OnClickListener { dialog, id ->
+                            billingViewModels.apply {
+                                placeOrder(order)
+                                adminOrder(order)
+                                deleteCartProducts()
+                            }
+
+                            findNavController().navigate(R.id.cartFragment)
+
+                        })
+                    .setNegativeButton("취소",
+                        DialogInterface.OnClickListener { dialog, id ->
+                        })
+                builder.show()
+            }
         }
 
 

@@ -3,6 +3,8 @@ package com.example.kelineyt.data.order
 import android.os.Parcelable
 import com.example.kelineyt.data.Address
 import com.example.kelineyt.data.CartProduct
+import com.example.kelineyt.firebase.FireBaseCommon
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.parcelize.Parcelize
 import java.text.SimpleDateFormat
 import java.util.*
@@ -16,6 +18,7 @@ data class Order(
     val totalPrice: Float = 0f,
     val products: List<CartProduct> = emptyList(),
     val address: Address = Address(),
+    val userId: String = "",
     val date: String = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA).format(Date()),
     val orderId: Long = nextLong(0,100_000_000_000) + totalPrice.toLong()
 
