@@ -21,36 +21,22 @@ import com.example.kelineyt.databinding.FragmentUserAccountBinding
 import com.example.kelineyt.dialog.setupBottomSheetDialog
 import com.example.kelineyt.util.Resource
 import com.example.kelineyt.viewmodel.UserAccountViewModel
+import com.example.kelineyt.viewmodel.makeIt.UserAccountViewModels
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 
 @AndroidEntryPoint
 class UserAccountFragment: Fragment()  {
-    private lateinit var binding: FragmentUserAccountBinding
-    private val viewModel by viewModels<UserAccountViewModel>()
-    private lateinit var imageActivityResultLauncher: ActivityResultLauncher<Intent>
 
-
-    private var imageUri: Uri? =null
-
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        imageActivityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            imageUri = it.data?.data
-            Glide.with(this).load(imageUri).into(binding.imageUser)
-        }
-    }
-
-
+    lateinit var binding: FragmentUserAccountBinding
+    private val viewModel by viewModels<UserAccountViewModels>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentUserAccountBinding.inflate(inflater)
+        binding = FragmentUserAccountBinding.inflate(layoutInflater)
         return binding.root
     }
 
@@ -65,74 +51,25 @@ class UserAccountFragment: Fragment()  {
                     }
                     is Resource.Success -> {
                         hideUserLoading()
-                        showUserInformation(it.data!!)
-                        }
-                    is Resource.Error -> {
-                        Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
-                    }
-                    else -> Unit
-                }
-            }
-        }
-
-        lifecycleScope.launchWhenStarted {
-            viewModel.updateInfo.collectLatest {
-                when (it) {
-                    is Resource.Loading -> {
-                        binding.buttonSave.startAnimation()
-                    }
-                    is Resource.Success -> {
-                        binding.buttonSave.revertAnimation()
-                        findNavController().navigateUp()
+                        enterData(it.data!!)
                     }
                     is Resource.Error -> {
-                        Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+                        hideUserLoading()
+                        binding.progressbarAccount.visibility = View.GONE
+
                     }
                     else -> Unit
+
                 }
-            }
-        }
-
-        binding.tvUpdatePassword.setOnClickListener {
-            setupBottomSheetDialog {
-
-            }
-        }
-
-
-        binding.buttonSave.setOnClickListener {
-            binding.apply {
-                val firstName = edFirstName.text.toString().trim()
-                val lastName = edLastName.text.toString().trim()
-                val email = edEmail.text.toString().trim()
-                val user = User(firstName,lastName,email)
-                viewModel.updateUser(user, imageUri)
             }
         }
 
         binding.imageEdit.setOnClickListener {
-            val intent = Intent(Intent.ACTION_GET_CONTENT)
-            intent.type = "image/*"
-            imageActivityResultLauncher.launch(intent)
 
         }
 
-
-
     }
-
-    private fun showUserInformation(data: User) {
-
-        binding.apply {
-            Glide.with(this@UserAccountFragment).load(data.imagePath).error(ColorDrawable(Color.BLACK)).into(imageUser)
-            edFirstName.setText(data.firstName)
-            edLastName.setText(data.lastName)
-            edEmail.setText(data.email)
-        }
-
-    }
-
-    private fun hideUserLoading() {
+        private fun hideUserLoading() {
         binding.apply {
             progressbarAccount.visibility = View.GONE
             imageUser.visibility = View.VISIBLE
@@ -156,4 +93,146 @@ class UserAccountFragment: Fragment()  {
             buttonSave.visibility = View.INVISIBLE
         }
     }
+
+
+    private fun enterData(user: User) {
+        Glide.with(requireView()).load(user.imagePath).into(binding.imageUser)
+        binding.apply {
+            edFirstName.setText(user.firstName)
+            edLastName.setText(user.lastName)
+            edEmail.setText(user.email)
+        }
+    }
+
+//
+//    private lateinit var binding: FragmentUserAccountBinding
+//    private val viewModel by viewModels<UserAccountViewModel>()
+//    private lateinit var imageActivityResultLauncher: ActivityResultLauncher<Intent>
+//
+//
+//    private var imageUri: Uri? =null
+//
+//
+//    override fun onCreate(savedInstanceState: Bundle?) {
+//        super.onCreate(savedInstanceState)
+//
+//        imageActivityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+//            imageUri = it.data?.data
+//            Glide.with(this).load(imageUri).into(binding.imageUser)
+//        }
+//    }
+//
+//
+//
+//    override fun onCreateView(
+//        inflater: LayoutInflater,
+//        container: ViewGroup?,
+//        savedInstanceState: Bundle?
+//    ): View? {
+//        binding = FragmentUserAccountBinding.inflate(inflater)
+//        return binding.root
+//    }
+//
+//    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+//        super.onViewCreated(view, savedInstanceState)
+//
+//        lifecycleScope.launchWhenStarted {
+//            viewModel.user.collectLatest {
+//                when (it) {
+//                    is Resource.Loading -> {
+//                        showUserLoading()
+//                    }
+//                    is Resource.Success -> {
+//                        hideUserLoading()
+//                        showUserInformation(it.data!!)
+//                        }
+//                    is Resource.Error -> {
+//                        Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+//                    }
+//                    else -> Unit
+//                }
+//            }
+//        }
+//
+//        lifecycleScope.launchWhenStarted {
+//            viewModel.updateInfo.collectLatest {
+//                when (it) {
+//                    is Resource.Loading -> {
+//                        binding.buttonSave.startAnimation()
+//                    }
+//                    is Resource.Success -> {
+//                        binding.buttonSave.revertAnimation()
+//                        findNavController().navigateUp()
+//                    }
+//                    is Resource.Error -> {
+//                        Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+//                    }
+//                    else -> Unit
+//                }
+//            }
+//        }
+//
+//        binding.tvUpdatePassword.setOnClickListener {
+//            setupBottomSheetDialog {
+//
+//            }
+//        }
+//
+//
+//        binding.buttonSave.setOnClickListener {
+//            binding.apply {
+//                val firstName = edFirstName.text.toString().trim()
+//                val lastName = edLastName.text.toString().trim()
+//                val email = edEmail.text.toString().trim()
+//                val user = User(firstName,lastName,email)
+//                viewModel.updateUser(user, imageUri)
+//            }
+//        }
+//
+//        binding.imageEdit.setOnClickListener {
+//            val intent = Intent(Intent.ACTION_GET_CONTENT)
+//            intent.type = "image/*"
+//            imageActivityResultLauncher.launch(intent)
+//
+//        }
+//
+//
+//
+//    }
+//
+//    private fun showUserInformation(data: User) {
+//
+//        binding.apply {
+//            Glide.with(this@UserAccountFragment).load(data.imagePath).error(ColorDrawable(Color.BLACK)).into(imageUser)
+//            edFirstName.setText(data.firstName)
+//            edLastName.setText(data.lastName)
+//            edEmail.setText(data.email)
+//        }
+//
+//    }
+//
+//    private fun hideUserLoading() {
+//        binding.apply {
+//            progressbarAccount.visibility = View.GONE
+//            imageUser.visibility = View.VISIBLE
+//            imageEdit.visibility = View.VISIBLE
+//            edFirstName.visibility = View.VISIBLE
+//            edLastName.visibility = View.VISIBLE
+//            edEmail.visibility = View.VISIBLE
+//            tvUpdatePassword.visibility = View.VISIBLE
+//            buttonSave.visibility = View.VISIBLE
+//        }    }
+//
+//    private fun showUserLoading() {
+//        binding.apply {
+//            progressbarAccount.visibility = View.VISIBLE
+//            imageUser.visibility = View.INVISIBLE
+//            imageEdit.visibility = View.INVISIBLE
+//            edFirstName.visibility = View.INVISIBLE
+//            edLastName.visibility = View.INVISIBLE
+//            edEmail.visibility = View.INVISIBLE
+//            tvUpdatePassword.visibility = View.INVISIBLE
+//            buttonSave.visibility = View.INVISIBLE
+//        }
+//    }
 }

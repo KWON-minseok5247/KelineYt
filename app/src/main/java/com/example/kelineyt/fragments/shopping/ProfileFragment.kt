@@ -25,17 +25,18 @@ import kotlinx.coroutines.flow.collectLatest
 
 @AndroidEntryPoint
 class ProfileFragment: Fragment() {
-    private lateinit var binding: FragmentProfileBinding
-    val viewModel by viewModels<ProfileViewModel>()
+
+    lateinit var binding: FragmentProfileBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentProfileBinding.inflate(inflater)
+        binding = FragmentProfileBinding.inflate(layoutInflater)
         return binding.root
     }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -43,56 +44,101 @@ class ProfileFragment: Fragment() {
         binding.constraintProfile.setOnClickListener {
             findNavController().navigate(R.id.action_profileFragment_to_userAccountFragment)
         }
-        binding.linearAllOrders.setOnClickListener {
-            findNavController().navigate(R.id.action_profileFragment_to_allOrdersFragment)
 
-        }
 
-        binding.linearBilling.setOnClickListener {
-            val action = ProfileFragmentDirections
-                .actionProfileFragmentToBillingFragment(0f, emptyArray(),false)
-            findNavController().navigate(action)
-        }
 
-        binding.logout.setOnClickListener {
-            viewModel.logout()
-            val intent = Intent(requireActivity(), LoginRegisterActivity::class.java)
-            startActivity(intent)
-            // finish로 하면 login화면에서 뒤로가기시 이 화면으로 안넘어감.
-            requireActivity().finish()
-        }
 
-        binding.tvVersion.text = "Version ${BuildConfig.VERSION_CODE}"
 
-        lifecycleScope.launchWhenStarted {
-            viewModel.user.collectLatest {
-                when (it) {
-                    is Resource.Loading -> {
-                        binding.progressbarSettings.visibility = View.VISIBLE
-                    }
-                    is Resource.Success -> {
-                        binding.progressbarSettings.visibility = View.GONE
-                        Glide.with(requireView()).load(it.data!!.imagePath).error(ColorDrawable(
-                            Color.BLACK)).into(binding.imageUser)
-                        binding.tvUserName.text = "${it.data.firstName} ${it.data.lastName}"
-                    }
-                    is Resource.Error -> {
-                        binding.progressbarSettings.visibility = View.GONE
-                        Toast.makeText(requireContext(),it.message,Toast.LENGTH_SHORT).show()
-                    }
-                    else -> Unit
-                }
-            }
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-
-        showBottomNavigationView()
     }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//    private lateinit var binding: FragmentProfileBinding
+//    val viewModel by viewModels<ProfileViewModel>()
+//
+//    override fun onCreateView(
+//        inflater: LayoutInflater,
+//        container: ViewGroup?,
+//        savedInstanceState: Bundle?
+//    ): View? {
+//        binding = FragmentProfileBinding.inflate(inflater)
+//        return binding.root
+//    }
+//
+//    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+//        super.onViewCreated(view, savedInstanceState)
+//
+//        binding.constraintProfile.setOnClickListener {
+//            findNavController().navigate(R.id.action_profileFragment_to_userAccountFragment)
+//        }
+//        binding.linearAllOrders.setOnClickListener {
+//            findNavController().navigate(R.id.action_profileFragment_to_allOrdersFragment)
+//
+//        }
+//
+//        binding.linearBilling.setOnClickListener {
+//            val action = ProfileFragmentDirections
+//                .actionProfileFragmentToBillingFragment(0f, emptyArray(),false)
+//            findNavController().navigate(action)
+//        }
+//
+//        binding.logout.setOnClickListener {
+//            viewModel.logout()
+//            val intent = Intent(requireActivity(), LoginRegisterActivity::class.java)
+//            startActivity(intent)
+//            // finish로 하면 login화면에서 뒤로가기시 이 화면으로 안넘어감.
+//            requireActivity().finish()
+//        }
+//
+//        binding.tvVersion.text = "Version ${BuildConfig.VERSION_CODE}"
+//
+//        lifecycleScope.launchWhenStarted {
+//            viewModel.user.collectLatest {
+//                when (it) {
+//                    is Resource.Loading -> {
+//                        binding.progressbarSettings.visibility = View.VISIBLE
+//                    }
+//                    is Resource.Success -> {
+//                        binding.progressbarSettings.visibility = View.GONE
+//                        Glide.with(requireView()).load(it.data!!.imagePath).error(ColorDrawable(
+//                            Color.BLACK)).into(binding.imageUser)
+//                        binding.tvUserName.text = "${it.data.firstName} ${it.data.lastName}"
+//                    }
+//                    is Resource.Error -> {
+//                        binding.progressbarSettings.visibility = View.GONE
+//                        Toast.makeText(requireContext(),it.message,Toast.LENGTH_SHORT).show()
+//                    }
+//                    else -> Unit
+//                }
+//            }
+//        }
+//    }
+//
+//    override fun onResume() {
+//        super.onResume()
+//
+//        showBottomNavigationView()
+//    }
+
+//
 
 
 }
