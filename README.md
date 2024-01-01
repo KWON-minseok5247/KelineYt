@@ -31,5 +31,5 @@ Firebase Authentication을 활용해 로그인 및 회원가입 구현 (비밀�
 https://www.youtube.com/@Landofcoding
 
 주석처리한 코드는 전부 Land of coding이 제작. 
-주석처리하지 않은 코드는 전부 직접 제작.
+주석처리하지 않은 코드는 전부 직접 제작중
 
