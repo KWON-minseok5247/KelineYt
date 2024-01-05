@@ -165,6 +165,7 @@
             app:layout_constraintEnd_toEndOf="@id/guideline2"
             app:layout_constraintTop_toBottomOf="@id/tvProducts"
             android:layout_marginTop="10dp"
+
             tools:listitem="@layout/billing_products_rv_item"
             />
 

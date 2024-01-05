@@ -16,10 +16,12 @@ import com.bumptech.glide.Glide
 import com.example.kelineyt.BuildConfig
 import com.example.kelineyt.R
 import com.example.kelineyt.activities.LoginRegisterActivity
+import com.example.kelineyt.data.User
 import com.example.kelineyt.databinding.FragmentProfileBinding
 import com.example.kelineyt.util.Resource
 import com.example.kelineyt.util.showBottomNavigationView
 import com.example.kelineyt.viewmodel.ProfileViewModel
+import com.example.kelineyt.viewmodel.makeIt.ProfileViewModels
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 
@@ -27,6 +29,7 @@ import kotlinx.coroutines.flow.collectLatest
 class ProfileFragment: Fragment() {
 
     lateinit var binding: FragmentProfileBinding
+    private val viewModel by viewModels<ProfileViewModels>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -45,30 +48,54 @@ class ProfileFragment: Fragment() {
             findNavController().navigate(R.id.action_profileFragment_to_userAccountFragment)
         }
 
+        lifecycleScope.launchWhenStarted {
+            viewModel.userImage.collectLatest {
+                when (it) {
+                    is Resource.Loading -> {
+                        showProgressBar()
+
+                    }
+                    is Resource.Success -> {
+                        hideProgressBar()
+                        fetchUserData(it.data!!)
+
+                    }
+                    is Resource.Error -> {
+                        hideProgressBar()
+                        Toast.makeText(requireContext(),it.message.toString(),Toast.LENGTH_SHORT).show()
+                    }
+                    else -> Unit
+                }
+            }
+        }
+        binding.linearAllOrders.setOnClickListener {
+            findNavController().navigate(R.id.action_profileFragment_to_allOrdersFragment)
+
+        }
+
+
+
 
 
 
 
     }
 
+    private fun fetchUserData(user: User) {
+        binding.apply {
+            Glide.with(requireView()).load(user.imagePath).into(binding.imageUser)
+            tvUserName.text = "${user.firstName} ${user.lastName}"
 
+        }
+    }
 
+    private fun showProgressBar() {
+        binding.progressbarSettings.visibility = View.VISIBLE
+    }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    private fun hideProgressBar() {
+        binding.progressbarSettings.visibility = View.GONE
+    }
 
 
 //    private lateinit var binding: FragmentProfileBinding

@@ -94,7 +94,6 @@ class BillingFragment : Fragment() {
                     is Resource.Success -> {
                         binding.buttonPlaceOrder.revertAnimation()
                         Log.e("끝","버튼 굴러가기 끝")
-
                     }
                     is Resource.Error -> {
                         binding.buttonPlaceOrder.revertAnimation()
