@@ -1,25 +1,19 @@
 package com.example.kelineyt.fragments.settings
 
+import android.R
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.navigation.NavArgs
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.example.kelineyt.R
-import com.example.kelineyt.adapter.BillingAdapter
-import com.example.kelineyt.adapter.makeIt.BestProductsAdapters
 import com.example.kelineyt.adapter.makeIt.BillingAdapters
-import com.example.kelineyt.adapter.makeIt.CartProductAdapters
 import com.example.kelineyt.data.order.OrderStatus
-import com.example.kelineyt.data.order.getOrderStatus
-import com.example.kelineyt.databinding.BillingProductsRvItemBinding
 import com.example.kelineyt.databinding.FragmentOrderDetailBinding
-import com.example.kelineyt.util.VerticalItemDecoration
+import com.shuhart.stepview.StepView
+
 
 class OrderDetailFragment: Fragment() {
 
@@ -44,27 +38,32 @@ class OrderDetailFragment: Fragment() {
         cartAdapter.differ.submitList(cartProducts)
 
         putOrderData()
+        val stepViewList = mutableListOf<String>(OrderStatus.Ordered.status,
+        OrderStatus.Shipped.status, OrderStatus.Delivered.status,
+        OrderStatus.Confirmed.status)
+
 
         var status = navArgs.orderStatus
+        binding.stepView.setSteps(stepViewList)
         when (status) {
             "Ordered" -> {
-                binding.stepView.
+                binding.stepView.go(0, true)
             }
             "Canceled" -> {
-                binding.imageOrderState.setColorFilter(res.getColor(R.color.g_red))
             }
             "Confirmed" -> {
-                binding.imageOrderState.setColorFilter(res.getColor(R.color.g_green))
+                binding.stepView.go(3, true)
+
             }
             "Shipped" -> {
-                binding.imageOrderState.setColorFilter(res.getColor(R.color.purple_200))
+                binding.stepView.go(1, true)
+
             }
             "Delivered" -> {
-                binding.imageOrderState.setColorFilter(res.getColor(R.color.g_blue_gray200))
-            }
-            else ->
-                binding.imageOrderState.setColorFilter(res.getColor(R.color.g_light_red))
+                binding.stepView.go(2, true)
 
+            }
+            else -> Unit
 
         }
 

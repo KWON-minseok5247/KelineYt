@@ -65,94 +65,157 @@ class BillingFragment : Fragment() {
         val totalPrice = args.totalPrice
         val payment = args.payment
 
-        binding.tvTotalPrice.text = String.format("%.2f", totalPrice)
-        billingCartProductRv()
-        addressRv()
-        lifecycleScope.launchWhenStarted {
-            billingViewModels.address.collectLatest {
-                when (it) {
-                    is Resource.Loading -> {
+        if (payment) // 거래하는 과정일 때
+        {
+            showPriceAndButton()
+            billingCartProductRv()
+            addressRv()
+            lifecycleScope.launchWhenStarted {
+                billingViewModels.address.collectLatest {
+                    when (it) {
+                        is Resource.Loading -> {
+                        }
+                        is Resource.Success -> {
+                            addressAdapters.differ.submitList(it.data)
+                        }
+                        is Resource.Error -> {
+                            Toast.makeText(requireContext(),it.message.toString(),Toast.LENGTH_SHORT).show()
+                        }
+                        else -> Unit
                     }
-                    is Resource.Success -> {
-                        addressAdapters.differ.submitList(it.data)
-                    }
-                    is Resource.Error -> {
-                        Toast.makeText(requireContext(),it.message.toString(),Toast.LENGTH_SHORT).show()
-                    }
-                    else -> Unit
                 }
             }
-        }
 
-        lifecycleScope.launchWhenStarted {
-            billingViewModels.order.collectLatest {
-                when (it) {
-                    is Resource.Loading -> {
-                        binding.buttonPlaceOrder.startAnimation()
-                        Log.e("시작","버튼 굴러가기 시작")
-                    }
-                    is Resource.Success -> {
-                        binding.buttonPlaceOrder.revertAnimation()
-                        Log.e("끝","버튼 굴러가기 끝")
-                    }
-                    is Resource.Error -> {
-                        binding.buttonPlaceOrder.revertAnimation()
-                        Toast.makeText(requireContext(),it.message.toString(),Toast.LENGTH_SHORT).show()
-                    }
+            lifecycleScope.launchWhenStarted {
+                billingViewModels.order.collectLatest {
+                    when (it) {
+                        is Resource.Loading -> {
+                            binding.buttonPlaceOrder.startAnimation()
+                            Log.e("시작","버튼 굴러가기 시작")
+                        }
+                        is Resource.Success -> {
+                            binding.buttonPlaceOrder.revertAnimation()
+                            Log.e("끝","버튼 굴러가기 끝")
+                        }
+                        is Resource.Error -> {
+                            binding.buttonPlaceOrder.revertAnimation()
+                            Toast.makeText(requireContext(),it.message.toString(),Toast.LENGTH_SHORT).show()
+                        }
 
-                    else -> Unit
+                        else -> Unit
+                    }
                 }
             }
-        }
 
-        addressAdapters.onClick = {
-            selectedAddress = it
-            Log.e("selectedAddress",selectedAddress.toString())
-        }
-
-        billingAdapters.onClick = {
-            val b = Bundle().apply {
-                putParcelable("product", it.product)
+            addressAdapters.onClick = {
+                selectedAddress = it
+                Log.e("selectedAddress",selectedAddress.toString())
             }
-            findNavController().navigate(R.id.productDetailsFragment, b)
-        }
 
-
-        //선택을 했을 때 연파란색 나머지는 흰색
-
-        binding.imageAddAddress.setOnClickListener {
-            findNavController().navigate(R.id.action_billingFragment_to_addressFragment)
-        }
-
-        binding.buttonPlaceOrder.setOnClickListener {
-            // 여기에 들어갈 데이터는 선택한 Address, Total price, CartProducts
-            // 따로 만들어야 할 데이터는 언제 주문했는지? 주문 상태 ex) Canceled, Ordered 등등, 주문번호!!!!
-            if (selectedAddress == null) {
-                Toast.makeText(requireContext(),"Check your Address", Toast.LENGTH_SHORT).show()
-            } else {
-                val order = Order("Ordered",totalPrice,args.products.toList(),selectedAddress!!,)
-                val builder = androidx.appcompat.app.AlertDialog.Builder(requireContext())
-                builder.setTitle("주문이 완료됩니다.")
-                    .setMessage("정말로 주문하시겠습니까?")
-                    .setPositiveButton("확인",
-                        DialogInterface.OnClickListener { dialog, id ->
-                            billingViewModels.apply {
-                                placeOrder(order)
-                                adminOrder(order)
-                                deleteCartProducts()
-                            }
-
-                            findNavController().navigate(R.id.cartFragment)
-
-                        })
-                    .setNegativeButton("취소",
-                        DialogInterface.OnClickListener { dialog, id ->
-                        })
-                builder.show()
+            addressAdapters.onDoubleClick = {
+//                val b = Bundle().apply {
+//                    putParcelable("address", it)
+//                }
+//                findNavController().navigate(R.id.productDetailsFragment, b)
+                Log.e("더블클릭", "작동 하나??")
             }
+
+
+            billingAdapters.onClick = {
+                val b = Bundle().apply {
+                    putParcelable("product", it.product)
+                }
+                findNavController().navigate(R.id.productDetailsFragment, b)
+            }
+
+
+            //선택을 했을 때 연파란색 나머지는 흰색
+
+            binding.imageAddAddress.setOnClickListener {
+                findNavController().navigate(R.id.action_billingFragment_to_addressFragment)
+            }
+
+            binding.buttonPlaceOrder.setOnClickListener {
+                // 여기에 들어갈 데이터는 선택한 Address, Total price, CartProducts
+                // 따로 만들어야 할 데이터는 언제 주문했는지? 주문 상태 ex) Canceled, Ordered 등등, 주문번호!!!!
+                if (selectedAddress == null) {
+                    Toast.makeText(requireContext(),"Check your Address", Toast.LENGTH_SHORT).show()
+                } else {
+                    val order = Order("Ordered",totalPrice,args.products.toList(),selectedAddress!!,)
+                    val builder = androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                    builder.setTitle("주문이 완료됩니다.")
+                        .setMessage("정말로 주문하시겠습니까?")
+                        .setPositiveButton("확인",
+                            DialogInterface.OnClickListener { dialog, id ->
+                                billingViewModels.apply {
+                                    placeOrder(order)
+                                    adminOrder(order)
+                                    deleteCartProducts()
+                                }
+
+                                findNavController().navigate(R.id.cartFragment)
+
+                            })
+                        .setNegativeButton("취소",
+                            DialogInterface.OnClickListener { dialog, id ->
+                            })
+                    builder.show()
+                }
+            }
+
+
+        } else { // profile을 통해 billingFragment를 들어갔을 경우
+            hidePriceAndButton()
+            addressRv()
+            lifecycleScope.launchWhenStarted {
+                billingViewModels.address.collectLatest {
+                    when (it) {
+                        is Resource.Loading -> {
+
+                        }
+                        is Resource.Success -> {
+                            addressAdapters.differ.submitList(it.data)
+                        }
+                        is Resource.Error -> {
+                            Toast.makeText(requireContext(),it.message.toString(),Toast.LENGTH_SHORT).show()
+                        }
+                        else -> Unit
+                    }
+                }
+            }
+
+            addressAdapters.onClick = {
+                selectedAddress = it
+                Log.e("selectedAddress",selectedAddress.toString())
+            }
+
+            //선택을 했을 때 연파란색 나머지는 흰색
+
+            binding.imageAddAddress.setOnClickListener {
+                findNavController().navigate(R.id.action_billingFragment_to_addressFragment)
+            }
+
         }
 
 
+
+
+    }
+
+    private fun hidePriceAndButton() {
+        binding.apply {
+            buttonPlaceOrder.visibility = View.GONE
+            totalBoxContainer.visibility = View.GONE
+            tvTotalPrice.visibility = View.GONE
+        }
+    }
+
+    private fun showPriceAndButton() {
+        binding.apply {
+            buttonPlaceOrder.visibility = View.VISIBLE
+            totalBoxContainer.visibility = View.VISIBLE
+            tvTotalPrice.visibility = View.VISIBLE
+        }
     }
 
     override fun onResume() {

@@ -22,6 +22,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.api.Context
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
+import java.util.Date
 
 @AndroidEntryPoint
 class AllOrdersFragment : Fragment(){
@@ -51,7 +52,14 @@ class AllOrdersFragment : Fragment(){
 
                     }
                     is Resource.Success -> {
-                        adapter.differ.submitList(it.data)
+                        // https://notepad96.tistory.com/19
+                        // 리스트 순서 조정하는 방법이다.
+                        val listOrder = it.data!!
+                        listOrder.sortWith( Comparator { o1, o2 ->
+                            o2.date.compareTo(o1.date)
+                        })
+
+                        adapter.differ.submitList(listOrder)
                     }
                     is Resource.Error -> {
                         Snackbar.make(requireView(), it.message.toString(), Snackbar.LENGTH_LONG).show()

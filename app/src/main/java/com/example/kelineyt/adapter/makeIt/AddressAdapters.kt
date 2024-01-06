@@ -14,6 +14,7 @@ import com.example.kelineyt.data.Address
 import com.example.kelineyt.data.Product
 import com.example.kelineyt.databinding.AddressRvItemBinding
 import com.example.kelineyt.databinding.SizeRvItemBinding
+import com.example.kelineyt.helper.setOnSingleClickListener
 
 class AddressAdapters : RecyclerView.Adapter<AddressAdapters.AddressViewHolder>() {
 
@@ -70,6 +71,13 @@ class AddressAdapters : RecyclerView.Adapter<AddressAdapters.AddressViewHolder>(
             onClick?.invoke(address)
         }
 
+        holder.binding.buttonAddress.setOnSingleClickListener  {
+
+            onDoubleClick?.invoke(address)
+
+        }
+
+
     }
 
     override fun getItemCount(): Int {
@@ -77,6 +85,8 @@ class AddressAdapters : RecyclerView.Adapter<AddressAdapters.AddressViewHolder>(
     }
 
     var onClick: ((Address) -> Unit)? = null
+    var onDoubleClick: ((Address) -> Unit)? = null
+
 }
 
 

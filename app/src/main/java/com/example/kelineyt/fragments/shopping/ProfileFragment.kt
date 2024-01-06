@@ -70,7 +70,21 @@ class ProfileFragment: Fragment() {
         }
         binding.linearAllOrders.setOnClickListener {
             findNavController().navigate(R.id.action_profileFragment_to_allOrdersFragment)
+        }
 
+        binding.logout.setOnClickListener {
+            viewModel.logout()
+            val intent = Intent(requireActivity(),LoginRegisterActivity::class.java)
+            startActivity(intent)
+            requireActivity().finish()
+        }
+
+        binding.linearBilling.setOnClickListener {
+            val b = ProfileFragmentDirections.actionProfileFragmentToBillingFragment(
+                0f, emptyArray(),false
+            )
+            findNavController().navigate(b)
+//            findNavController().navigate(R.id.action_profileFragment_to_billingFragment)
         }
 
 
