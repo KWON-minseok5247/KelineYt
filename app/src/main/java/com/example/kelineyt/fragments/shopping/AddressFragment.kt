@@ -30,6 +30,7 @@ class AddressFragment: Fragment() {
     lateinit var binding: FragmentAddressBinding
     private val viewModel by viewModels<AddressViewModels>()
     private val addressAdapters by lazy { AddressAdapters() }
+    private val navArgs by navArgs<AddressFragmentArgs>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -42,24 +43,48 @@ class AddressFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        if (navArgs.address == null) { // Address를 새로 만들었을 때
 
+            binding.buttonSave.setOnClickListener {
+                val addressTitle = binding.edAddressTitle.text.toString()
+                val fullName = binding.edFullName.text.toString()
+                val street = binding.edStreet.text.toString()
+                val phone = binding.edPhone.text.toString()
+                val city = binding.edCity.text.toString()
+                val state = binding.edState.text.toString()
 
+                val address = Address(addressTitle, fullName, street, phone, city, state)
+                viewModel.saveAddress(address)
 
-        binding.buttonSave.setOnClickListener {
-            val addressTitle = binding.edAddressTitle.text.toString()
-            val fullName = binding.edFullName.text.toString()
-            val street = binding.edStreet.text.toString()
-            val phone = binding.edPhone.text.toString()
-            val city = binding.edCity.text.toString()
-            val state = binding.edState.text.toString()
+                findNavController().navigateUp()
+                // 여기서 뭔가를 해야 하지 않을까?
+            }
 
-            val address = Address(addressTitle, fullName, street, phone, city, state)
-            viewModel.saveAddress(address)
+        } else { // 이미 존재하는 Address를 불러왔을 때
+            binding.apply {
+                edAddressTitle.setText(navArgs.address!!.addressTitle)
+                edFullName.setText(navArgs.address!!.fullName)
+                edStreet.setText(navArgs.address!!.street)
+                edPhone.setText(navArgs.address!!.phone)
+                edCity.setText(navArgs.address!!.city)
+                edState.setText(navArgs.address!!.state)
+            }
+            val oldAddress = navArgs.address!!
 
-            findNavController().navigateUp()
-            // 여기서 뭔가를 해야 하지 않을까?5
-            
+            binding.buttonSave.setOnClickListener {
+                val addressTitle = binding.edAddressTitle.text.toString()
+                val fullName = binding.edFullName.text.toString()
+                val street = binding.edStreet.text.toString()
+                val phone = binding.edPhone.text.toString()
+                val city = binding.edCity.text.toString()
+                val state = binding.edState.text.toString()
 
+                val newAddress = Address(addressTitle, fullName, street, phone, city, state)
+                viewModel.updateAddress(oldAddress, newAddress)
+
+                findNavController().navigateUp()
+                // 여기서 뭔가를 해야 하지 않을까?
+            }
         }
 
 

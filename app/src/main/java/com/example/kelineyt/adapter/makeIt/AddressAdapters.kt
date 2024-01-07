@@ -14,11 +14,11 @@ import com.example.kelineyt.data.Address
 import com.example.kelineyt.data.Product
 import com.example.kelineyt.databinding.AddressRvItemBinding
 import com.example.kelineyt.databinding.SizeRvItemBinding
-import com.example.kelineyt.helper.setOnSingleClickListener
 
 class AddressAdapters : RecyclerView.Adapter<AddressAdapters.AddressViewHolder>() {
 
     private var selectedPosition = -1
+    private var delay : Long = 0
 
     inner class AddressViewHolder(val binding: AddressRvItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -60,20 +60,25 @@ class AddressAdapters : RecyclerView.Adapter<AddressAdapters.AddressViewHolder>(
         holder.bind(address, position)
 
         holder.binding.buttonAddress.setOnClickListener {
-            if (selectedPosition >= 0) { // 이미 클릭되어 있던 포지션을 체크 해제하는 과정
+            if (System.currentTimeMillis() > delay) {
+                delay = System.currentTimeMillis() + 200
+                if (selectedPosition >= 0) { // 이미 클릭되어 있던 포지션을 체크 해제하는 과정
+                    notifyItemChanged(selectedPosition)
+                    notifyItemChanged(differ.currentList.lastIndex)
+                }
+                selectedPosition = holder.adapterPosition // 클릭한 포지션을 변경하는 과정
                 notifyItemChanged(selectedPosition)
                 notifyItemChanged(differ.currentList.lastIndex)
+
+                onClick?.invoke(address)
+            } else {
+                onDoubleClick?.invoke(address)
             }
-            selectedPosition = holder.adapterPosition // 클릭한 포지션을 변경하는 과정
-            notifyItemChanged(selectedPosition)
-            notifyItemChanged(differ.currentList.lastIndex)
+//            if (System.currentTimeMillis() <= delay) {
+//                // 2번 클릭했을 때
+//
+//            }
 
-            onClick?.invoke(address)
-        }
-
-        holder.binding.buttonAddress.setOnSingleClickListener  {
-
-            onDoubleClick?.invoke(address)
 
         }
 

@@ -14,16 +14,19 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AddressViewModels
-    @Inject constructor(
-        private val auth: FirebaseAuth,
-        private val firestore: FirebaseFirestore
-    ) : ViewModel() {
+@Inject constructor(
+    private val auth: FirebaseAuth,
+    private val firestore: FirebaseFirestore
+) : ViewModel() {
+
+    private val firebaseAddressCollection =
+        firestore.collection("user").document(auth.uid!!).collection("address")
 
     private val _address = MutableStateFlow<Resource<Address>>(Resource.unspecified())
     val address = _address.asStateFlow()
 
     fun saveAddress(address: Address) {
-        firestore.collection("user").document(auth.uid!!).collection("address")
+        firebaseAddressCollection
             .add(address).addOnSuccessListener {
                 viewModelScope.launch {
                     _address.emit(Resource.Success(address))
@@ -36,9 +39,25 @@ class AddressViewModels
             }
     }
 
+    fun updateAddress(oldAddress: Address, newAddress: Address) { // 업데이트를 하려면 해당 document부터 찾아야 한다.
 
+        val a = firebaseAddressCollection.get().addOnSuccessListener {
+            val b = it.documents
+        }
 
+        firebaseAddressCollection
 
+            .document().set(address)
+            .addOnSuccessListener {
+                viewModelScope.launch {
+                    _address.emit(Resource.Success(newAddress))
+                }
+            }.addOnFailureListener {
+                viewModelScope.launch {
+                    _address.emit(Resource.Error(it.message.toString()))
+                }
+            }
+    }
 
 
 }

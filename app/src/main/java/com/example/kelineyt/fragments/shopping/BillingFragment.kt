@@ -113,12 +113,14 @@ class BillingFragment : Fragment() {
             }
 
             addressAdapters.onDoubleClick = {
-//                val b = Bundle().apply {
-//                    putParcelable("address", it)
-//                }
-//                findNavController().navigate(R.id.productDetailsFragment, b)
-                Log.e("더블클릭", "작동 하나??")
+                val b = Bundle().apply {
+                    putParcelable("address", it)
+                }
+                // putParcelable은 나중에 받을 프래그먼트에서 navArgs를 통해 데이터를 받는 것 같다.
+                findNavController().navigate(R.id.action_billingFragment_to_addressFragment, b)
             }
+
+
 
 
             billingAdapters.onClick = {
@@ -186,7 +188,14 @@ class BillingFragment : Fragment() {
 
             addressAdapters.onClick = {
                 selectedAddress = it
-                Log.e("selectedAddress",selectedAddress.toString())
+            }
+
+            addressAdapters.onDoubleClick = {
+                val b = Bundle().apply {
+                    putParcelable("address", it)
+                }
+                // putParcelable은 나중에 받을 프래그먼트에서 navArgs를 통해 데이터를 받는 것 같다.
+                findNavController().navigate(R.id.action_billingFragment_to_addressFragment, b)
             }
 
             //선택을 했을 때 연파란색 나머지는 흰색
