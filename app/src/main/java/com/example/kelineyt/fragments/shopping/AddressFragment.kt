@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -31,7 +32,6 @@ class AddressFragment: Fragment() {
     private val viewModel by viewModels<AddressViewModels>()
     private val addressAdapters by lazy { AddressAdapters() }
     private val navArgs by navArgs<AddressFragmentArgs>()
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -70,6 +70,7 @@ class AddressFragment: Fragment() {
                 edState.setText(navArgs.address!!.state)
             }
             val oldAddress = navArgs.address!!
+            val index = navArgs.index
 
             binding.buttonSave.setOnClickListener {
                 val addressTitle = binding.edAddressTitle.text.toString()
@@ -80,9 +81,10 @@ class AddressFragment: Fragment() {
                 val state = binding.edState.text.toString()
 
                 val newAddress = Address(addressTitle, fullName, street, phone, city, state)
-                viewModel.updateAddress(oldAddress, newAddress)
-
+                viewModel.updateAddress(index, newAddress)
+                // 그리고 billingFragment를 업데이트했으면 좋겠다.
                 findNavController().navigateUp()
+
                 // 여기서 뭔가를 해야 하지 않을까?
             }
         }

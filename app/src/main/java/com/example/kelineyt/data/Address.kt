@@ -10,8 +10,7 @@ data class Address (
     val street: String,
     val phone: String,
     val city : String,
-    val state: String
+    val state: String,
         ) : Parcelable {
-
             constructor() : this("", "", "", "", "", "")
 }

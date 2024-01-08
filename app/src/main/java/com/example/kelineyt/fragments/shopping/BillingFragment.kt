@@ -2,6 +2,7 @@ package com.example.kelineyt.fragments.shopping
 
 import android.app.AlertDialog
 import android.content.DialogInterface
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -190,11 +191,17 @@ class BillingFragment : Fragment() {
                 selectedAddress = it
             }
 
-            addressAdapters.onDoubleClick = {
+            addressAdapters.onDoubleClick = {address ->
+
+                val index = billingViewModels.address.value.data?.indexOf(address)
                 val b = Bundle().apply {
-                    putParcelable("address", it)
+                    putParcelable("address", address)
+                    if (index != null) {
+                        putInt("index", index)
+                    }
                 }
                 // putParcelable은 나중에 받을 프래그먼트에서 navArgs를 통해 데이터를 받는 것 같다.
+
                 findNavController().navigate(R.id.action_billingFragment_to_addressFragment, b)
             }
 

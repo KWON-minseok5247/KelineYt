@@ -34,22 +34,29 @@ class BillingViewModels
         getAddressRv()
     }
 
-    fun getAddressRv() {
+    fun getAddressRv() { // 실시간으로 수정해야 하니까 addSnapshot이 낫네.
         viewModelScope.launch {
             _address.emit(Resource.Loading())
         }
         firestore.collection("user").document(auth.uid!!).collection("address")
-            .get().addOnSuccessListener {
-                val addressList = it.toObjects(Address::class.java)
-                viewModelScope.launch {
-                    _address.emit(Resource.Success(addressList))
-                }
-            }.addOnFailureListener {
-                viewModelScope.launch {
-                    _address.emit(Resource.Error(it.message.toString()))
+            .addSnapshotListener { value, error ->
+                if (value != null && error == null) {
+                    val addressList = value.toObjects(Address::class.java)
+                    viewModelScope.launch {
+                        _address.emit(Resource.Success(addressList))
+                    }
+                } else {
+                    viewModelScope.launch {
+                        if (error != null) {
+                            _address.emit(Resource.Error(error.message.toString()))
+                        }
+                    }
                 }
             }
-    }
+
+            }
+
+
 
     fun placeOrder(order: Order) {
         viewModelScope.launch {

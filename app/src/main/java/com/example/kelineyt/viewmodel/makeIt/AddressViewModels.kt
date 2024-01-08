@@ -1,5 +1,6 @@
 package com.example.kelineyt.viewmodel.makeIt
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.kelineyt.data.Address
@@ -39,18 +40,16 @@ class AddressViewModels
             }
     }
 
-    fun updateAddress(oldAddress: Address, newAddress: Address) { // 업데이트를 하려면 해당 document부터 찾아야 한다.
+    fun updateAddress(index: Int, newAddress: Address) { // 업데이트를 하려면 해당 document부터 찾아야 한다.
+         firebaseAddressCollection.get().addOnSuccessListener {
 
-        val a = firebaseAddressCollection.get().addOnSuccessListener {
-            val b = it.documents
-        }
-
-        firebaseAddressCollection
-
-            .document().set(address)
-            .addOnSuccessListener {
-                viewModelScope.launch {
-                    _address.emit(Resource.Success(newAddress))
+                val wantedAddressId = it.documents[index].id
+                firestore.runTransaction { transition ->
+                    val documentRef = firebaseAddressCollection.document(wantedAddressId)
+                    transition.set(documentRef, newAddress)
+                    viewModelScope.launch {
+                        _address.emit(Resource.Success(newAddress))
+                    }
                 }
             }.addOnFailureListener {
                 viewModelScope.launch {
