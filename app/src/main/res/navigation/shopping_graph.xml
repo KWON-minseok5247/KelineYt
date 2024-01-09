@@ -71,7 +71,8 @@
             android:defaultValue="@null" />
         <argument
             android:name="index"
-            app:argType="integer" />
+            app:argType="integer"
+            android:defaultValue="-1" />
     </fragment>
     <fragment
         android:id="@+id/billingFragment"

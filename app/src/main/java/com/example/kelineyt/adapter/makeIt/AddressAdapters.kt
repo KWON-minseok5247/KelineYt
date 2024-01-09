@@ -60,8 +60,6 @@ class AddressAdapters : RecyclerView.Adapter<AddressAdapters.AddressViewHolder>(
         holder.bind(address, position)
 
         holder.binding.buttonAddress.setOnClickListener {
-            if (System.currentTimeMillis() > delay) {
-                delay = System.currentTimeMillis() + 200
                 if (selectedPosition >= 0) { // 이미 클릭되어 있던 포지션을 체크 해제하는 과정
                     notifyItemChanged(selectedPosition)
                     notifyItemChanged(differ.currentList.lastIndex)
@@ -69,11 +67,7 @@ class AddressAdapters : RecyclerView.Adapter<AddressAdapters.AddressViewHolder>(
                 selectedPosition = holder.adapterPosition // 클릭한 포지션을 변경하는 과정
                 notifyItemChanged(selectedPosition)
                 notifyItemChanged(differ.currentList.lastIndex)
-
                 onClick?.invoke(address)
-            } else {
-                onDoubleClick?.invoke(address)
-            }
 //            if (System.currentTimeMillis() <= delay) {
 //                // 2번 클릭했을 때
 //
@@ -81,6 +75,29 @@ class AddressAdapters : RecyclerView.Adapter<AddressAdapters.AddressViewHolder>(
 
 
         }
+
+//        holder.binding.buttonAddress.setOnClickListener {
+//            if (System.currentTimeMillis() > delay) {
+//                delay = System.currentTimeMillis() + 2000
+//                if (selectedPosition >= 0) { // 이미 클릭되어 있던 포지션을 체크 해제하는 과정
+//                    notifyItemChanged(selectedPosition)
+//                    notifyItemChanged(differ.currentList.lastIndex)
+//                }
+//                selectedPosition = holder.adapterPosition // 클릭한 포지션을 변경하는 과정
+//                notifyItemChanged(selectedPosition)
+//                notifyItemChanged(differ.currentList.lastIndex)
+//
+//                onClick?.invoke(address)
+//            } else {
+//                onDoubleClick?.invoke(address)
+//            }
+////            if (System.currentTimeMillis() <= delay) {
+////                // 2번 클릭했을 때
+////
+////            }
+//
+//
+//        }
 
 
     }

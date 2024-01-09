@@ -41,21 +41,32 @@ class AddressViewModels
     }
 
     fun updateAddress(index: Int, newAddress: Address) { // 업데이트를 하려면 해당 document부터 찾아야 한다.
-         firebaseAddressCollection.get().addOnSuccessListener {
+        firebaseAddressCollection.get().addOnSuccessListener {
 
-                val wantedAddressId = it.documents[index].id
-                firestore.runTransaction { transition ->
-                    val documentRef = firebaseAddressCollection.document(wantedAddressId)
-                    transition.set(documentRef, newAddress)
-                    viewModelScope.launch {
-                        _address.emit(Resource.Success(newAddress))
-                    }
-                }
-            }.addOnFailureListener {
+            val wantedAddressId = it.documents[index].id
+            firestore.runTransaction { transition ->
+                val documentRef = firebaseAddressCollection.document(wantedAddressId)
+                transition.set(documentRef, newAddress)
                 viewModelScope.launch {
-                    _address.emit(Resource.Error(it.message.toString()))
+                    _address.emit(Resource.Success(newAddress))
                 }
             }
+        }.addOnFailureListener {
+            viewModelScope.launch {
+                _address.emit(Resource.Error(it.message.toString()))
+            }
+        }
+    }
+
+    fun deleteAddress(index: Int) { // 업데이트를 하려면 해당 document부터 찾아야 한다.
+        firebaseAddressCollection.get().addOnSuccessListener {
+            val wantedAddressId = it.documents[index].id
+            firebaseAddressCollection.document(wantedAddressId).delete()
+        }.addOnFailureListener {
+            viewModelScope.launch {
+                _address.emit(Resource.Error(it.message.toString()))
+            }
+        }
     }
 
 

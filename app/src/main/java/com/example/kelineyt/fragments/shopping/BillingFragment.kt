@@ -45,12 +45,12 @@ import java.util.Date
 // 클릭하기 전까지 사라지지 않는 문제가 발생 정확하게는 마지막 항목이 업데이트되지 않는다.
 @AndroidEntryPoint
 class BillingFragment : Fragment() {
-    private val args : BillingFragmentArgs by navArgs()
+    private val args: BillingFragmentArgs by navArgs()
     lateinit var binding: FragmentBillingBinding
     private val billingAdapters by lazy { BillingAdapters() }
     private val addressAdapters by lazy { AddressAdapters() }
     private val billingViewModels by viewModels<BillingViewModels>()
-    private var selectedAddress : Address? = null
+    private var selectedAddress: Address? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -80,7 +80,11 @@ class BillingFragment : Fragment() {
                             addressAdapters.differ.submitList(it.data)
                         }
                         is Resource.Error -> {
-                            Toast.makeText(requireContext(),it.message.toString(),Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                requireContext(),
+                                it.message.toString(),
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                         else -> Unit
                     }
@@ -92,15 +96,19 @@ class BillingFragment : Fragment() {
                     when (it) {
                         is Resource.Loading -> {
                             binding.buttonPlaceOrder.startAnimation()
-                            Log.e("시작","버튼 굴러가기 시작")
+                            Log.e("시작", "버튼 굴러가기 시작")
                         }
                         is Resource.Success -> {
                             binding.buttonPlaceOrder.revertAnimation()
-                            Log.e("끝","버튼 굴러가기 끝")
+                            Log.e("끝", "버튼 굴러가기 끝")
                         }
                         is Resource.Error -> {
                             binding.buttonPlaceOrder.revertAnimation()
-                            Toast.makeText(requireContext(),it.message.toString(),Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                requireContext(),
+                                it.message.toString(),
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
 
                         else -> Unit
@@ -109,16 +117,33 @@ class BillingFragment : Fragment() {
             }
 
             addressAdapters.onClick = {
-                selectedAddress = it
-                Log.e("selectedAddress",selectedAddress.toString())
+                if (selectedAddress == it) {
+                    val index = billingViewModels.address.value.data?.indexOf(it)
+                    val b = Bundle().apply {
+                        putParcelable("address", it)
+                        if (index != null) {
+                            putInt("index", index)
+                        }
+                    }
+                    // putParcelable은 나중에 받을 프래그먼트에서 navArgs를 통해 데이터를 받는 것 같다.
+
+                    findNavController().navigate(R.id.action_billingFragment_to_addressFragment, b)
+
+                } else {
+                    selectedAddress = it
+                }
             }
 
             addressAdapters.onDoubleClick = {
-                val b = Bundle().apply {
-                    putParcelable("address", it)
-                }
-                // putParcelable은 나중에 받을 프래그먼트에서 navArgs를 통해 데이터를 받는 것 같다.
-                findNavController().navigate(R.id.action_billingFragment_to_addressFragment, b)
+//                val index = billingViewModels.address.value.data?.indexOf(it)
+//                val b = Bundle().apply {
+//                    putParcelable("address", it)
+//                    if (index != null) {
+//                        putInt("index", index)
+//                    }
+//                }
+//                // putParcelable은 나중에 받을 프래그먼트에서 navArgs를 통해 데이터를 받는 것 같다.
+//                findNavController().navigate(R.id.action_billingFragment_to_addressFragment, b)
             }
 
 
@@ -142,9 +167,11 @@ class BillingFragment : Fragment() {
                 // 여기에 들어갈 데이터는 선택한 Address, Total price, CartProducts
                 // 따로 만들어야 할 데이터는 언제 주문했는지? 주문 상태 ex) Canceled, Ordered 등등, 주문번호!!!!
                 if (selectedAddress == null) {
-                    Toast.makeText(requireContext(),"Check your Address", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Check your Address", Toast.LENGTH_SHORT)
+                        .show()
                 } else {
-                    val order = Order("Ordered",totalPrice,args.products.toList(),selectedAddress!!,)
+                    val order =
+                        Order("Ordered", totalPrice, args.products.toList(), selectedAddress!!)
                     val builder = androidx.appcompat.app.AlertDialog.Builder(requireContext())
                     builder.setTitle("주문이 완료됩니다.")
                         .setMessage("정말로 주문하시겠습니까?")
@@ -180,7 +207,11 @@ class BillingFragment : Fragment() {
                             addressAdapters.differ.submitList(it.data)
                         }
                         is Resource.Error -> {
-                            Toast.makeText(requireContext(),it.message.toString(),Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                requireContext(),
+                                it.message.toString(),
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                         else -> Unit
                     }
@@ -188,21 +219,34 @@ class BillingFragment : Fragment() {
             }
 
             addressAdapters.onClick = {
-                selectedAddress = it
+                if (selectedAddress == it) {
+                    val index = billingViewModels.address.value.data?.indexOf(it)
+                    val b = Bundle().apply {
+                        putParcelable("address", it)
+                        if (index != null) {
+                            putInt("index", index)
+                        }
+                    }
+                    // putParcelable은 나중에 받을 프래그먼트에서 navArgs를 통해 데이터를 받는 것 같다.
+
+                    findNavController().navigate(R.id.action_billingFragment_to_addressFragment, b)
+                } else {
+                    selectedAddress = it
+                }
             }
 
-            addressAdapters.onDoubleClick = {address ->
-
-                val index = billingViewModels.address.value.data?.indexOf(address)
-                val b = Bundle().apply {
-                    putParcelable("address", address)
-                    if (index != null) {
-                        putInt("index", index)
-                    }
-                }
-                // putParcelable은 나중에 받을 프래그먼트에서 navArgs를 통해 데이터를 받는 것 같다.
-
-                findNavController().navigate(R.id.action_billingFragment_to_addressFragment, b)
+            addressAdapters.onDoubleClick = { address ->
+//
+//                val index = billingViewModels.address.value.data?.indexOf(address)
+//                val b = Bundle().apply {
+//                    putParcelable("address", address)
+//                    if (index != null) {
+//                        putInt("index", index)
+//                    }
+//                }
+//                // putParcelable은 나중에 받을 프래그먼트에서 navArgs를 통해 데이터를 받는 것 같다.
+//
+//                findNavController().navigate(R.id.action_billingFragment_to_addressFragment, b)
             }
 
             //선택을 했을 때 연파란색 나머지는 흰색
@@ -212,8 +256,6 @@ class BillingFragment : Fragment() {
             }
 
         }
-
-
 
 
     }
@@ -242,15 +284,16 @@ class BillingFragment : Fragment() {
 
     private fun addressRv() {
         binding.rvAddress.adapter = addressAdapters
-        binding.rvAddress.layoutManager = LinearLayoutManager(requireContext(),LinearLayoutManager.HORIZONTAL,false)
+        binding.rvAddress.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
     }
 
     private fun billingCartProductRv() {
         binding.rvProducts.adapter = billingAdapters
-        binding.rvProducts.layoutManager = LinearLayoutManager(requireContext(),LinearLayoutManager.HORIZONTAL,false)
+        binding.rvProducts.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         billingAdapters.differ.submitList(args.products.toMutableList())
     }
-
 
 
 //    private lateinit var binding: FragmentBillingBinding

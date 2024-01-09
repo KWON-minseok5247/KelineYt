@@ -1,11 +1,13 @@
 package com.example.kelineyt.fragments.shopping
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -30,8 +32,8 @@ import kotlinx.coroutines.launch
 class AddressFragment: Fragment() {
     lateinit var binding: FragmentAddressBinding
     private val viewModel by viewModels<AddressViewModels>()
-    private val addressAdapters by lazy { AddressAdapters() }
     private val navArgs by navArgs<AddressFragmentArgs>()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -43,7 +45,13 @@ class AddressFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if (navArgs.address == null) { // Address를 새로 만들었을 때
+
+        binding.imageAddressClose.setOnClickListener {
+            findNavController().navigateUp()
+        }
+        val getAddress = navArgs?.address
+
+        if (getAddress == null && navArgs.index == -1) { // Address를 새로 만들었을 때
 
             binding.buttonSave.setOnClickListener {
                 val addressTitle = binding.edAddressTitle.text.toString()
@@ -53,24 +61,46 @@ class AddressFragment: Fragment() {
                 val city = binding.edCity.text.toString()
                 val state = binding.edState.text.toString()
 
-                val address = Address(addressTitle, fullName, street, phone, city, state)
-                viewModel.saveAddress(address)
+                var emptyBoolean = (addressTitle.isNotEmpty() && fullName.isNotEmpty() && state.isNotEmpty() &&
+                        street.isNotEmpty() && phone.isNotEmpty() && city.isNotEmpty())
+                if (emptyBoolean) {
+                    val address = Address(addressTitle, fullName, street, phone, city, state)
+                    viewModel.saveAddress(address)
+                    findNavController().navigateUp()
+                } else {
+                    Toast.makeText(requireContext(),"Check the empty part.",Toast.LENGTH_SHORT).show()
+                }
 
-                findNavController().navigateUp()
-                // 여기서 뭔가를 해야 하지 않을까?
             }
 
         } else { // 이미 존재하는 Address를 불러왔을 때
+
+            val oldAddress = navArgs?.address!!
+
             binding.apply {
-                edAddressTitle.setText(navArgs.address!!.addressTitle)
-                edFullName.setText(navArgs.address!!.fullName)
-                edStreet.setText(navArgs.address!!.street)
-                edPhone.setText(navArgs.address!!.phone)
-                edCity.setText(navArgs.address!!.city)
-                edState.setText(navArgs.address!!.state)
+                edAddressTitle.setText(oldAddress.addressTitle)
+                edFullName.setText(oldAddress.fullName)
+                edStreet.setText(oldAddress.street)
+                edPhone.setText(oldAddress.phone)
+                edCity.setText(oldAddress.city)
+                edState.setText(oldAddress.state)
             }
-            val oldAddress = navArgs.address!!
-            val index = navArgs.index
+            val index = navArgs!!.index
+            binding.buttonDelelte.setOnClickListener {
+                val builder = AlertDialog.Builder(requireContext())
+                builder.setTitle("주소가 삭제됩니다.")
+                    .setMessage("정말 삭제하시겠습니까?")
+                    .setPositiveButton("확인",
+                        DialogInterface.OnClickListener { dialog, id ->
+                            viewModel.deleteAddress(index)
+                            findNavController().navigateUp()
+                        })
+                    .setNegativeButton("취소",
+                        DialogInterface.OnClickListener { dialog, id ->
+                        })
+                builder.show()
+            }
+
 
             binding.buttonSave.setOnClickListener {
                 val addressTitle = binding.edAddressTitle.text.toString()
@@ -80,12 +110,18 @@ class AddressFragment: Fragment() {
                 val city = binding.edCity.text.toString()
                 val state = binding.edState.text.toString()
 
-                val newAddress = Address(addressTitle, fullName, street, phone, city, state)
-                viewModel.updateAddress(index, newAddress)
-                // 그리고 billingFragment를 업데이트했으면 좋겠다.
-                findNavController().navigateUp()
+                var emptyBoolean = (addressTitle.isNotEmpty() && fullName.isNotEmpty() && state.isNotEmpty() &&
+                        street.isNotEmpty() && phone.isNotEmpty() && city.isNotEmpty())
 
-                // 여기서 뭔가를 해야 하지 않을까?
+                if (emptyBoolean) {
+                    val newAddress = Address(addressTitle, fullName, street, phone, city, state)
+                    viewModel.updateAddress(index, newAddress)
+                    findNavController().navigateUp()
+
+                } else {
+                    Toast.makeText(requireContext(),"Check the empty part.",Toast.LENGTH_SHORT).show()
+                }
+
             }
         }
 
