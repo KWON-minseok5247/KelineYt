@@ -30,6 +30,9 @@ class IntroductionViewModel @Inject constructor(
     //StateFlow는 업스트림 Flow에서 업데이트를 수신하고 최신 값을 저장한다
     //다양한 Flow가 존재하지만 StateFlow는 정확하게 최적화할 수 있으므로 권장한다.
 
+    //자동 로그인 구현 과정
+//https://velog.io/@saint6839/%ED%8C%8C%EC%9D%B4%EC%96%B4%EB%B2%A0%EC%9D%B4%EC%8A%A4-%EA%B5%AC%EA%B8%80-%EC%9E%90%EB%8F%99%EB%A1%9C%EA%B7%B8%EC%9D%B8-%EA%B8%B0%EB%8A%A5
+
     private val _navigate = MutableStateFlow(0)
     val navigate: StateFlow<Int> = _navigate
 
@@ -43,7 +46,7 @@ class IntroductionViewModel @Inject constructor(
 //    init {
 //        // false는 디폴트 값이다.
 //        val isButtonClicked = sharedPreferences.getBoolean(INTRODUCTION_KEY, false)
-//        //TODO 로그인 하는 시점에 firebaseAuth.currentUser가 부여되어야 한다.
+//        //
 //
 //        val user = firebaseAuth.currentUser
 //
@@ -65,25 +68,17 @@ class IntroductionViewModel @Inject constructor(
 //        } else {
 //            Unit
 //        }
-//    }
 
 //    init {
 //        // false는 디폴트 값이다.
 //        val isButtonClicked = sharedPreferences.getBoolean(INTRODUCTION_KEY,false)
-//        //TODO 로그인 하는 시점에 firebaseAuth.currentUser가 부여되어야 한다.
-//        //TODO 회원가입을 하고 앱 종료후 다시 접속시 바로 로그인되는 상황 발생
+//        //회원가입을 하고 앱 종료후 다시 접속시 바로 로그인되는 상황 발생 -> 중간에 auth.logout()을 넣음으로써 임시조치 완료
 //        val user = firebaseAuth.currentUser
 //
 //        if (user != null) {
-//            user.getIdToken(true).addOnCompleteListener { task ->
-//                if (task.isSuccessful) {
-//                    viewModelScope.launch {
-//                        _navigate.emit(SHOPPING_ACTIVITY)
-//                    }
-//                }
+//            viewModelScope.launch {
+//                _navigate.emit(SHOPPING_ACTIVITY)
 //            }
-//
-//
 //        } else if(isButtonClicked) {
 //            viewModelScope.launch {
 //                _navigate.emit(ACCOUNT_OPTIONS_FRAGMENT)
@@ -91,28 +86,45 @@ class IntroductionViewModel @Inject constructor(
 //        } else {
 //            Unit
 //        }
-//    }
 
+
+//    init {
+//        // false는 디폴트 값이다.
+//        val isButtonClicked = sharedPreferences.getBoolean(INTRODUCTION_KEY, false)
 //
-    init {
-            // false는 디폴트 값이다.
-            val isButtonClicked = sharedPreferences.getBoolean(INTRODUCTION_KEY,false)
-            //TODO 로그인 하는 시점에 firebaseAuth.currentUser가 부여되어야 한다.
-            //회원가입을 하고 앱 종료후 다시 접속시 바로 로그인되는 상황 발생 -> 중간에 auth.logout()을 넣음으로써 임시조치 완료
-            val user = firebaseAuth.currentUser
+//        val user = firebaseAuth.currentUser
+//        if (isButtonClicked) {
+//            user?.getIdToken(true)?.addOnCompleteListener(OnCompleteListener<GetTokenResult?>{task ->
+//                if (task.isSuccessful) {
+//                    viewModelScope.launch {
+//                        _navigate.emit(SHOPPING_ACTIVITY)
+//                    }
+//                } else {
+//                    viewModelScope.launch {
+//                        _navigate.emit(ACCOUNT_OPTIONS_FRAGMENT)
+//                    }
+//                }
+//            })
+//        } else {
+//            Unit
+//        }
 
-            if (user != null) {
-                viewModelScope.launch {
-                    _navigate.emit(SHOPPING_ACTIVITY)
-                }
-            } else if(isButtonClicked) {
-                viewModelScope.launch {
-                    _navigate.emit(ACCOUNT_OPTIONS_FRAGMENT)
-                }
-            } else {
-                Unit
+    init {
+        val isButtonClicked = sharedPreferences.getBoolean(INTRODUCTION_KEY, false)
+
+        val user = firebaseAuth.currentUser
+        if (user != null) {
+            viewModelScope.launch {
+                _navigate.emit(SHOPPING_ACTIVITY)
             }
+        } else if (isButtonClicked) {
+            viewModelScope.launch {
+                _navigate.emit(ACCOUNT_OPTIONS_FRAGMENT)
+            }
+        } else {
+            Unit
         }
+    }
 
     fun startButtonClick() {
         sharedPreferences.edit().putBoolean(INTRODUCTION_KEY, true).apply()

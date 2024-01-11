@@ -38,7 +38,7 @@ fun Fragment.setupBottomSheetDialog(
     buttonSend.setOnClickListener {
         val email = edEmail.text.toString().trim()
         onSendClick(email) // 미지의 함수 -> 다른 뷰모델에 직접 추가해서 써야 하는 듯?
-        dialog.dismiss()
+        dialog.dismiss() // dismiss는 종료
     }
 
     buttonCancel.setOnClickListener {

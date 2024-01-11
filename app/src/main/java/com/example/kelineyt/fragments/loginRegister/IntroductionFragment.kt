@@ -1,6 +1,5 @@
 package com.example.kelineyt.fragments.loginRegister
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -16,13 +15,11 @@ import com.example.kelineyt.databinding.FragmentIntroductionBinding
 import com.example.kelineyt.viewmodel.IntroductionViewModel
 import com.example.kelineyt.viewmodel.IntroductionViewModel.Companion.ACCOUNT_OPTIONS_FRAGMENT
 import com.example.kelineyt.viewmodel.IntroductionViewModel.Companion.SHOPPING_ACTIVITY
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.firebase.auth.GetTokenResult
 import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
-class introductionFragment : Fragment(R.layout.fragment_introduction) {
+class IntroductionFragment : Fragment(R.layout.fragment_introduction) {
     private lateinit var binding: FragmentIntroductionBinding
     private val viewModel by viewModels<IntroductionViewModel>()
 
@@ -50,6 +47,7 @@ class introductionFragment : Fragment(R.layout.fragment_introduction) {
                         // FLAG_ACTIVITY_CLEAR_TASK
                         //이 Activity와 관련된 Task가 수행중이면 Activity가 수행되기 전에 다른 액티비티는 모두 종료된다.
                         //이 플래그는 FLAG_ACTIVITY_NEW_TASK와 같이 사용되어야 한다.
+
                         Intent(requireActivity(), ShoppingActivity::class.java).also { intent ->
                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
                             startActivity(intent)
@@ -59,7 +57,6 @@ class introductionFragment : Fragment(R.layout.fragment_introduction) {
 
                     ACCOUNT_OPTIONS_FRAGMENT -> {
                         findNavController().navigate(it)
-
                     }
                     else -> Unit
                 }
@@ -71,7 +68,6 @@ class introductionFragment : Fragment(R.layout.fragment_introduction) {
             viewModel.startButtonClick()
             findNavController().navigate(R.id.action_introductionFragment_to_accountOptionsFragment)
         }
-
     }
 
 

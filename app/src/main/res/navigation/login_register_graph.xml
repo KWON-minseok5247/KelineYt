@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/introductionFragment"
         tools:layout="@layout/fragment_introduction"
-        android:name="com.example.kelineyt.fragments.loginRegister.introductionFragment"
+        android:name="com.example.kelineyt.fragments.loginRegister.IntroductionFragment"
         android:label="introductionFragment" >
         <action
             android:id="@+id/action_introductionFragment_to_accountOptionsFragment"

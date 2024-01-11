@@ -2,6 +2,7 @@ package com.example.kelineyt.viewmodel
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.kelineyt.data.User
 import com.example.kelineyt.util.*
 import com.example.kelineyt.util.Constants.USER_COLLECTION
@@ -10,6 +11,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
@@ -19,10 +21,10 @@ class RegisterViewModel @Inject constructor(
     private val db: FirebaseFirestore
     // 위에 애들을 실행하는 순간 Appmodule의 애들이 실행되는 것 같다.
 ) : ViewModel() {
-//    //TODO 이메일에 오류가 없는지 확인하는 절차가 필요하다. 이게 우선순위임
+//     이메일에 오류가 없는지 확인하는 절차가 필요하다. 이게 우선순위임
 //
-//    //TODO 파이어베이스에 정상적으로 이메일과 아이디를 만들 수 었어야 한다.
-    //TODO 로그인시점에 firebaseAuth.user가 업데이트되어야 한다.
+//     파이어베이스에 정상적으로 이메일과 아이디를 만들 수 었어야 한다.
+    // 로그인시점에 firebaseAuth.user가 업데이트되어야 한다.
 //
 //    private val _register = MutableStateFlow<Resource<User>>(Resource.unspecified())
 //    val register = _register.asStateFlow()
@@ -97,7 +99,7 @@ class RegisterViewModel @Inject constructor(
                 _register.emit(Resource.Loading())
             }
 
-            FirebaseAuth.getInstance().createUserWithEmailAndPassword(user.email, password)
+            firebaseAuth.createUserWithEmailAndPassword(user.email, password)
                 .addOnSuccessListener {
                     it.user?.let {
                         saveUserInfo(it.uid,user)

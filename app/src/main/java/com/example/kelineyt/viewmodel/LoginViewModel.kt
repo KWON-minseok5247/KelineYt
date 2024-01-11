@@ -9,6 +9,8 @@ import com.example.kelineyt.util.validatePassword
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
@@ -27,29 +29,30 @@ class LoginViewModel @Inject constructor(
 
     private val _resetPassword = MutableSharedFlow<Resource<String>>()
     val resetPassword = _resetPassword.asSharedFlow()
-
-    //TODO 로그인뷰모델에서는 2가지 -> 로그인 기능과 비밀번호 리셋기능이 필요하다.
-
     fun login(email: String, password: String) {
         // 일단 이메일이나 비밀번호 오류가 있는지는 확인해야 한다.
         viewModelScope.launch {
             _login.emit(Resource.Loading())
         }
-        if (validation(email, password)) {
-            firebaseAuth.signInWithEmailAndPassword(email, password).addOnSuccessListener {
-                viewModelScope.launch {
-                    _login.emit(Resource.Success(it.user!!))
+        CoroutineScope(Dispatchers.IO).launch { // 네트워크 속도 엄청 빨라짐!!!!!!!!!!!!!!!!!!!
+            if (validation(email, password)) {
+                firebaseAuth.signInWithEmailAndPassword(email, password).addOnSuccessListener {
+                    viewModelScope.launch {
+                        _login.emit(Resource.Success(it.user!!))
+                    }
+                }.addOnFailureListener {
+                    viewModelScope.launch {
+                        _login.emit(Resource.Error(it.message.toString()))
+                    }
                 }
-            }.addOnFailureListener {
+            } else {
                 viewModelScope.launch {
-                    _login.emit(Resource.Error(it.message.toString()))
+                    _login.emit(Resource.Error("Check your id or password"))
                 }
-            }
-        } else {
-            viewModelScope.launch {
-                _login.emit(Resource.Error("Check your id or password"))
             }
         }
+
+
     }
 
     fun validation(email: String, password: String): Boolean {

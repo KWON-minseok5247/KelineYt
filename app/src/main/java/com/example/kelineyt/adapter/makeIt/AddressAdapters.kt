@@ -18,7 +18,6 @@ import com.example.kelineyt.databinding.SizeRvItemBinding
 class AddressAdapters : RecyclerView.Adapter<AddressAdapters.AddressViewHolder>() {
 
     private var selectedPosition = -1
-    private var delay : Long = 0
 
     inner class AddressViewHolder(val binding: AddressRvItemBinding) :
         RecyclerView.ViewHolder(binding.root) {

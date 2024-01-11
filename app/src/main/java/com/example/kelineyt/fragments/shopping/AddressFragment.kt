@@ -119,6 +119,8 @@ class AddressFragment: Fragment() {
                     findNavController().navigateUp()
 
                 } else {
+
+
                     Toast.makeText(requireContext(),"Check the empty part.",Toast.LENGTH_SHORT).show()
                 }
 
