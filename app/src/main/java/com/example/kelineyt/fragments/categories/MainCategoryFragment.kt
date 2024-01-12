@@ -45,9 +45,9 @@ class MainCategoryFragment: Fragment(R.layout.fragment_main_category) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        //TODO 여기서는 뷰모델로부터 총 3개를 받아야 한다. Special, Best Deals, Best Product
-        //TODO 또한 각각 어댑터를 적용해야 한다.
-        //TODO best Products같은 경우 10개마다 불러오는 등의 기술이 필요하다.
+        // 여기서는 뷰모델로부터 총 3개를 받아야 한다. Special, Best Deals, Best Product
+        // 또한 각각 어댑터를 적용해야 한다.
+        // best Products같은 경우 10개마다 불러오는 등의 기술이 필요하다.
         temporarySpecialProductRv()
 
         lifecycleScope.launchWhenStarted {
@@ -126,12 +126,8 @@ class MainCategoryFragment: Fragment(R.layout.fragment_main_category) {
 
         })
 
-        //        bestProductsAdapter.onClick = {
-//            val b = Bundle().apply { putParcelable("product", it)  }
-//            findNavController().navigate(R.id.action_homeFragment_to_productDetailsFragment,b)
-//        }
 
-        bestProductsAdapter.onClick = {product ->
+        bestProductsAdapter.onClick = { product ->
             val b = Bundle().apply {
                 putParcelable("product",product)
             }
@@ -342,7 +338,5 @@ class MainCategoryFragment: Fragment(R.layout.fragment_main_category) {
         binding.rvSpecialProducts.adapter = specialProductsAdapter
         binding.rvSpecialProducts.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-
-
     }
 }

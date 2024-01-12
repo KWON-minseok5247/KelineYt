@@ -32,7 +32,6 @@ class BestDealsAdapter: RecyclerView.Adapter<BestDealsAdapter.BestDealsViewHolde
                     tvNewPrice.text = "$ ${newPrice.toString()}"
                     // "$ ${String.format("%.2f", newPrice}"를 해도 된다. 숫자에 오류가 발생하지 않을 가능성 높아짐.
                     tvOldPrice.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
-
                 }
 
 

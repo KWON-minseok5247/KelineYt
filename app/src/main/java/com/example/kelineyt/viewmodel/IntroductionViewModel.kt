@@ -69,26 +69,9 @@ class IntroductionViewModel @Inject constructor(
 //            Unit
 //        }
 
-//    init {
-//        // false는 디폴트 값이다.
-//        val isButtonClicked = sharedPreferences.getBoolean(INTRODUCTION_KEY,false)
-//        //회원가입을 하고 앱 종료후 다시 접속시 바로 로그인되는 상황 발생 -> 중간에 auth.logout()을 넣음으로써 임시조치 완료
-//        val user = firebaseAuth.currentUser
-//
-//        if (user != null) {
-//            viewModelScope.launch {
-//                _navigate.emit(SHOPPING_ACTIVITY)
-//            }
-//        } else if(isButtonClicked) {
-//            viewModelScope.launch {
-//                _navigate.emit(ACCOUNT_OPTIONS_FRAGMENT)
-//            }
-//        } else {
-//            Unit
-//        }
 
-
-//    init {
+//    init { // 이 방법이 맞기는 한데 상황이 잘못된 것 같다. 이 방식을 사용하려면
+    // 이 프래그먼트가 아니라 새로운 스플래시 액티비티에서 사용해야 유용한 것 같다. 짧은 시간동안 비추기도 함.
 //        // false는 디폴트 값이다.
 //        val isButtonClicked = sharedPreferences.getBoolean(INTRODUCTION_KEY, false)
 //
@@ -109,7 +92,7 @@ class IntroductionViewModel @Inject constructor(
 //            Unit
 //        }
 
-    init {
+    init { // 이 방식은 스플래시에서는 적합하지 않다. 중간에 짤막하게나마 화면을 보여줘야 하는데 이건 바로 넘어간다.
         val isButtonClicked = sharedPreferences.getBoolean(INTRODUCTION_KEY, false)
 
         val user = firebaseAuth.currentUser

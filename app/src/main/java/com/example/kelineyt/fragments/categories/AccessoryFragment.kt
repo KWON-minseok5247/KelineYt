@@ -20,8 +20,10 @@ class AccessoryFragment: BaseCategoryFragment() {
     @Inject
     // @Inject : 의존성 주입(생성자 또는 메서드 등을 통해 외부로부터 생성된 객체를 전달받는 것)을 받겠다.
     lateinit var firestore: FirebaseFirestore
-
+//    val view by viewModels<CategoryViewModel>(firestore,Category.Accessory) {}
+//  위의 방식은 안통하니까 아래와같이 만들고 팩토리를 추가해야 한다.
     val viewModel by viewModels<CategoryViewModel> {
+        // 내가 뷰 모델을 쓰긴 할 건데 여기 파라미터에 firestore와 Category.Accessory를 넣어라. 이 말임.
         BaseCategoryViewModelFactory(firestore, Category.Accessory)
     }
 

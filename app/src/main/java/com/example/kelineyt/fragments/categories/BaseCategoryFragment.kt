@@ -41,7 +41,7 @@ open class BaseCategoryFragment: Fragment(R.layout.fragment_base_category) {
 
 
         bestProductsAdapter.onClick = {
-            // 저기서 setonclicklistener가 없어서 onclick으로 대체를 한 건가???????????
+            // 저기서 setonclicklistener가 없어서 onclick으로 대체를 한 건가??????????? -> 맞다. Product 타입까지 고려해주니 하는 게 맞다.
             // 아이템 뷰를 클릭할 때에 해당 product(b)를 들고 해당 프래그먼트로 이동한다.
             val b = Bundle().apply { putParcelable("product", it)  }
             findNavController().navigate(R.id.action_homeFragment_to_productDetailsFragment,b)
@@ -87,7 +87,7 @@ open class BaseCategoryFragment: Fragment(R.layout.fragment_base_category) {
 
     }
 
-    fun     showOfferLoading() {
+    fun showOfferLoading() {
         binding.offerProductsProgressBar.visibility = View.VISIBLE
     }
     fun hideOfferLoading() {

@@ -79,7 +79,6 @@ class MainCategoryViewModel @Inject constructor(
                     val products = it.toObjects(Product::class.java)
                     viewModelScope.launch {
                         _bestProduct.emit(Resource.Success(products))
-                        Log.e("page = ", page.toString())
                         page++
                         if (emptyList != products) {
                             emptyList = products
@@ -97,8 +96,8 @@ class MainCategoryViewModel @Inject constructor(
 
     }
 
-    // TODO 먼저 초기에 파이어베이스로부터 데이터를 받아야 한다. 여기 뷰모델에는 이게 제일 핵심임.
-    // TODO 그리고 해당 데이터를 어댑터와 연결을 시킨다. 프래그먼트에서는
+    // 먼저 초기에 파이어베이스로부터 데이터를 받아야 한다. 여기 뷰모델에는 이게 제일 핵심임.
+    // 그리고 해당 데이터를 어댑터와 연결을 시킨다. 프래그먼트에서는
     fun getSpecialProduct() {
         viewModelScope.launch {
             _specialProduct.emit(Resource.Loading())
@@ -127,7 +126,7 @@ class MainCategoryViewModel @Inject constructor(
 //    fun fetchBestProducts() {
 ////        viewModelScope.launch {
 ////            _bestProducts.emit(Resource.Loading())
-////        }
+////        } // 조건을 여러가지 추가할 때 파이어베이스에 인덱스를 미리 추가해둬야 값을 구할 수 있다.
 //        //.whereEqualTo("category", "Chair").orderBy(
 //        //                    "id",
 //        //                    Query.Direction.ASCENDING
@@ -160,11 +159,11 @@ class MainCategoryViewModel @Inject constructor(
 //        }
 //
 //    }
-//    internal data class PagingInfo(
-//        var bestProductsPage: Long = 1,
-//        var oldBestProducts: List<Product> = emptyList(),
-//        var isPagingEnd: Boolean = false
-//    )
+    internal data class PagingInfo(
+        var bestProductsPage: Long = 1,
+        var oldBestProducts: List<Product> = emptyList(),
+        var isPagingEnd: Boolean = false
+    )
 //
 //
 //    fun fetchBestDeals() {
@@ -197,11 +196,11 @@ class MainCategoryViewModel @Inject constructor(
 //
 //    }
 //
-//    internal data class PagingBestDeals(
-//        var bestDealsPage: Long = 1,
-//        var oldBestDeals: List<Product> = emptyList(),
-//        var isBestDealsPagingEnd: Boolean = false
-//    )
+    internal data class PagingBestDeals(
+        var bestDealsPage: Long = 1,
+        var oldBestDeals: List<Product> = emptyList(),
+        var isBestDealsPagingEnd: Boolean = false
+    )
 //
 ////    fun fetchBestDeals() {
 ////        viewModelScope.launch {
