@@ -7,4 +7,8 @@ object Constants {
     // sp는 sharedpreference
     const val INTRODUCTION_SP = "IntroductionSP"
     const val INTRODUCTION_KEY = "IntroductionKey"
+
+    const val PRODUCTS_COLLECTION = "Products"
+    const val NAME_PROPERTY = "name"
+    const val PAGE_SIZE = 10
 }

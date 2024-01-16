@@ -10,17 +10,31 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.paging.*
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.kelineyt.R
 import com.example.kelineyt.adapter.*
 import com.example.kelineyt.adapter.makeIt.BestProductsAdapters
+import com.example.kelineyt.adapter.makeIt.ProductsAdapter
 import com.example.kelineyt.adapter.makeIt.TemporarySpecialProductsAdapter
+import com.example.kelineyt.data.Product
 import com.example.kelineyt.databinding.FragmentMainCategoryBinding
+import com.example.kelineyt.paging.MyFirebasePagingSource
+import com.example.kelineyt.paging.MyPagingDataAdapter
+import com.example.kelineyt.paging.MyPagingViewModel
+//import com.example.kelineyt.paging.CountryAdapter
+//import com.example.kelineyt.paging.MainViewModel
 import com.example.kelineyt.util.*
 import com.example.kelineyt.viewmodel.MainCategoryViewModel
+import com.example.kelineyt.viewmodel.makeIt.ProductsViewModels
+import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 private val TAG = "MainCategoryFragment"
 @AndroidEntryPoint
@@ -29,8 +43,18 @@ class MainCategoryFragment: Fragment(R.layout.fragment_main_category) {
     private lateinit var specialProductsAdapter: TemporarySpecialProductsAdapter
     private lateinit var bestDealsAdapter: BestDealsAdapter
     private lateinit var bestProductsAdapter: BestProductsAdapters
+    private lateinit var productsAdapters: ProductsAdapter
+    private val productsViewModel by viewModels<ProductsViewModels>()
     private var page = 1 // 현재 페이지
 
+
+    private val myFirebaseViewModel by viewModels<MyPagingViewModel>()
+    private val myPagingDataAdapter = MyPagingDataAdapter()
+
+
+//    private val mainViewModel by viewModels<MainViewModel>()
+//    private val countryAdapter = CountryAdapter()
+//    private val collectionReference = FirebaseFirestore.getInstance().collection("Products")
     private val viewModel by viewModels<MainCategoryViewModel>()
 
 
@@ -48,6 +72,47 @@ class MainCategoryFragment: Fragment(R.layout.fragment_main_category) {
         // 여기서는 뷰모델로부터 총 3개를 받아야 한다. Special, Best Deals, Best Product
         // 또한 각각 어댑터를 적용해야 한다.
         // best Products같은 경우 10개마다 불러오는 등의 기술이 필요하다.
+
+//        myFirebaseStorageRv()
+//        // Paging 데이터 흐름 설정
+//        lifecycleScope.launchWhenStarted {
+//            myFirebaseViewModel.flow.collectLatest { pagingData ->
+////                pagingData.insertSeparators { before: Product?, after: Product? ->
+////                    // 페이지가 변경될 때마다 호출됩니다.
+////                    // before와 after로 페이지의 첫 번째 아이템과 다음 페이지의 첫 번째 아이템을 전달받습니다.
+////                    // 여기서 로깅 또는 다른 작업 수행 가능
+////                    Log.d("PagingData", "Before: $before, After: $after")
+////                    // null을 반환하면 separator가 추가되지 않습니다.
+////                    // 여기에서 필요에 따라 separator를 추가하거나 생략할 수 있습니다.
+////                    null
+////                }
+//
+//
+//
+//                myPagingDataAdapter.submitData(pagingData)
+//            }
+//        }
+
+
+        // 데이터 업데이트를 감지하고 RecyclerView에 적용
+        viewLifecycleOwner.lifecycleScope.launch {
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         temporarySpecialProductRv()
 
         lifecycleScope.launchWhenStarted {
@@ -69,25 +134,25 @@ class MainCategoryFragment: Fragment(R.layout.fragment_main_category) {
             }
         }
         bestProductsRv()
-        lifecycleScope.launchWhenStarted {
-            viewModel.bestProduct.collectLatest {
-                when (it) {
-                    is Resource.Loading -> {
-                        binding.bestProductsProgressbar.visibility = View.VISIBLE
-                    }
-                    is Resource.Success -> {
-                        binding.bestProductsProgressbar.visibility = View.GONE
-                        bestProductsAdapter.differ.submitList(it.data)
-
-                    }
-                    is Resource.Error -> {
-                        binding.bestProductsProgressbar.visibility = View.GONE
-
-                    }
-                    else -> Unit
-                }
-            }
-        }
+//        lifecycleScope.launchWhenStarted {
+//            viewModel.bestProduct.collectLatest {
+//                when (it) {
+//                    is Resource.Loading -> {
+//                        binding.bestProductsProgressbar.visibility = View.VISIBLE
+//                    }
+//                    is Resource.Success -> {
+//                        binding.bestProductsProgressbar.visibility = View.GONE
+//                        bestProductsAdapter.differ.submitList(it.data)
+//
+//                    }
+//                    is Resource.Error -> {
+//                        binding.bestProductsProgressbar.visibility = View.GONE
+//
+//                    }
+//                    else -> Unit
+//                }
+//            }
+//        }
         bestDealsRv()
         lifecycleScope.launchWhenStarted {
             viewModel.bestDeals.collectLatest {
@@ -110,21 +175,51 @@ class MainCategoryFragment: Fragment(R.layout.fragment_main_category) {
         }
 
 
-        binding.nestedScrollMainCategory.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { v, _, scrollY, _, _ ->
-//            Log.e("asd","${v.getChildAt(0).bottom} ${v.height} ${scrollY}")
+// Activity에서는 lifecycleScope를 직접적으로 사용할 수 있지만
+// Fragment는 viewLifecycleOwner.lifecycleScope를 사용해야 한다.
+        // 임시조치 20240115
+        productRv()
+        lifecycleScope.launchWhenStarted {
 
-            // v.getChildAt(0)은 초기 고정값(최대높이 정도?)인 것 같고, v.height는 nestedscrollview의 높이, scrollY는 현재 Y의 정도로 아래로 스크롤
-            // 할수록 점점 커진다.
-            if (v.getChildAt(0).bottom <= v.height + scrollY) {
-                Log.e("asd", "${v.getChildAt(0).bottom} ${v.height} ${scrollY}")
-                // 3411 1313 2098
-                // 1번 스크롤시,
-                // 5459 1313 4146
-                viewModel.getBestProducts()
-
+            productsViewModel.flow.collectLatest {
+                productsAdapters.submitData(it)
             }
+        }
+//        viewLifecycleOwner.lifecycleScope.launch {
+//
+//        }
+//        lifecycleScope.launch {
+//
+//        }
 
-        })
+
+
+
+//        binding.nestedScrollMainCategory.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { v, _, scrollY, _, _ ->
+////            Log.e("asd","${v.getChildAt(0).bottom} ${v.height} ${scrollY}")
+//
+//            // v.getChildAt(0)은 초기 고정값(최대높이 정도?)인 것 같고, v.height는 nestedscrollview의 높이, scrollY는 현재 Y의 정도로 아래로 스크롤
+//            // 할수록 점점 커진다.
+//            if (v.getChildAt(0).bottom <= v.height + scrollY) {
+//                Log.e("asd", "${v.getChildAt(0).bottom} ${v.height} ${scrollY}")
+//                // 3411 1313 2098
+//                // 1번 스크롤시,
+//                // 5459 1313 4146
+//                viewModel.getBestProducts()
+//
+//            }
+//
+//        })
+
+
+
+//        lifecycleScope.launch {
+//            mainViewModel.flow.collect {
+//                countryAdapter.submitData(it)
+//            }
+//        }
+
+
 
 
         bestProductsAdapter.onClick = { product ->
@@ -339,4 +434,17 @@ class MainCategoryFragment: Fragment(R.layout.fragment_main_category) {
         binding.rvSpecialProducts.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
     }
+
+    private fun productRv() {
+        productsAdapters = ProductsAdapter()
+        binding.rvBestProducts.adapter = productsAdapters
+        binding.rvBestProducts.layoutManager =
+            GridLayoutManager(requireContext(), 2, LinearLayoutManager.VERTICAL, false)
+    }
+    private fun myFirebaseStorageRv() {
+        binding.rvBestProducts.adapter = myPagingDataAdapter
+        binding.rvBestProducts.layoutManager =
+            GridLayoutManager(requireContext(), 2, LinearLayoutManager.VERTICAL, false)
+    }
+
 }

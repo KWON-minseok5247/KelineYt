@@ -47,7 +47,7 @@ class MainCategoryViewModel @Inject constructor(
 
     init {
         getSpecialProduct()
-        getBestProducts()
+//        getBestProducts()
         getBestDealsProducts()
     }
 

@@ -4,6 +4,9 @@ import android.app.Application
 import android.content.Context.MODE_PRIVATE
 import com.example.kelineyt.firebase.FireBaseCommon
 import com.example.kelineyt.util.Constants.INTRODUCTION_SP
+import com.example.kelineyt.util.Constants.NAME_PROPERTY
+import com.example.kelineyt.util.Constants.PAGE_SIZE
+import com.example.kelineyt.util.Constants.PRODUCTS_COLLECTION
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
@@ -50,4 +53,21 @@ object AppModule {
     @Provides
     @Singleton
     fun provideStorage() = FirebaseStorage.getInstance().reference
+
+
+    @Provides
+    @Singleton
+    fun provideQueryProducts() = FirebaseFirestore.getInstance()
+        .collection(PRODUCTS_COLLECTION)
+//        .orderBy(NAME_PROPERTY, ASCENDING)
+//        .limit(PAGE_SIZE.toLong())
+
+    @Provides
+    @Singleton
+    fun provideQueryProductsByName() = FirebaseFirestore.getInstance()
+        .collection(PRODUCTS_COLLECTION)
+//        .orderBy(NAME_PROPERTY, ASCENDING)
+        .limit(PAGE_SIZE.toLong())
+
+
 }
