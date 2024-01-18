@@ -13,6 +13,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.paging.*
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.kelineyt.R
 import com.example.kelineyt.adapter.*
 import com.example.kelineyt.adapter.makeIt.BestProductsAdapters
@@ -20,6 +21,7 @@ import com.example.kelineyt.adapter.makeIt.ProductsAdapter
 import com.example.kelineyt.adapter.makeIt.TemporarySpecialProductsAdapter
 import com.example.kelineyt.data.Product
 import com.example.kelineyt.databinding.FragmentMainCategoryBinding
+import com.example.kelineyt.helper.StickyHeaderItemDecoration
 import com.example.kelineyt.paging.MyFirebasePagingSource
 import com.example.kelineyt.paging.MyPagingDataAdapter
 import com.example.kelineyt.paging.MyPagingViewModel
@@ -42,14 +44,13 @@ class MainCategoryFragment: Fragment(R.layout.fragment_main_category) {
     private lateinit var binding: FragmentMainCategoryBinding
     private lateinit var specialProductsAdapter: TemporarySpecialProductsAdapter
     private lateinit var bestDealsAdapter: BestDealsAdapter
-    private lateinit var bestProductsAdapter: BestProductsAdapters
-    private lateinit var productsAdapters: ProductsAdapter
-    private val productsViewModel by viewModels<ProductsViewModels>()
+//    private lateinit var bestProductsAdapter: BestProductsAdapters
+//    private lateinit var productsAdapters: ProductsAdapter
+//    private val productsViewModel by viewModels<ProductsViewModels>()
     private var page = 1 // 현재 페이지
 
-
+    private lateinit var myPagingDataAdapter: MyPagingDataAdapter
     private val myFirebaseViewModel by viewModels<MyPagingViewModel>()
-    private val myPagingDataAdapter = MyPagingDataAdapter()
 
 
 //    private val mainViewModel by viewModels<MainViewModel>()
@@ -73,30 +74,23 @@ class MainCategoryFragment: Fragment(R.layout.fragment_main_category) {
         // 또한 각각 어댑터를 적용해야 한다.
         // best Products같은 경우 10개마다 불러오는 등의 기술이 필요하다.
 
-//        myFirebaseStorageRv()
-//        // Paging 데이터 흐름 설정
-//        lifecycleScope.launchWhenStarted {
-//            myFirebaseViewModel.flow.collectLatest { pagingData ->
-////                pagingData.insertSeparators { before: Product?, after: Product? ->
-////                    // 페이지가 변경될 때마다 호출됩니다.
-////                    // before와 after로 페이지의 첫 번째 아이템과 다음 페이지의 첫 번째 아이템을 전달받습니다.
-////                    // 여기서 로깅 또는 다른 작업 수행 가능
-////                    Log.d("PagingData", "Before: $before, After: $after")
-////                    // null을 반환하면 separator가 추가되지 않습니다.
-////                    // 여기에서 필요에 따라 separator를 추가하거나 생략할 수 있습니다.
-////                    null
-////                }
-//
-//
-//
-//                myPagingDataAdapter.submitData(pagingData)
-//            }
-//        }
+
+        myFirebaseStorageRv()
+        // Paging 데이터 흐름 설정
+//        productRv()
+        lifecycleScope.launchWhenStarted {
+            myFirebaseViewModel.flow.collectLatest {
+                myPagingDataAdapter.submitData(it)
+            }
+        }
 
 
-        // 데이터 업데이트를 감지하고 RecyclerView에 적용
-        viewLifecycleOwner.lifecycleScope.launch {
-
+        myPagingDataAdapter.addLoadStateListener { loadState ->
+            if (loadState.refresh is LoadState.Loading) {
+                binding.mainCategoryProgressbar.visibility = View.VISIBLE
+            } else {
+                binding.mainCategoryProgressbar.visibility = View.GONE
+            }
         }
 
 
@@ -133,7 +127,7 @@ class MainCategoryFragment: Fragment(R.layout.fragment_main_category) {
                 }
             }
         }
-        bestProductsRv()
+//        bestProductsRv()
 //        lifecycleScope.launchWhenStarted {
 //            viewModel.bestProduct.collectLatest {
 //                when (it) {
@@ -178,18 +172,12 @@ class MainCategoryFragment: Fragment(R.layout.fragment_main_category) {
 // Activity에서는 lifecycleScope를 직접적으로 사용할 수 있지만
 // Fragment는 viewLifecycleOwner.lifecycleScope를 사용해야 한다.
         // 임시조치 20240115
-        productRv()
-        lifecycleScope.launchWhenStarted {
-
-            productsViewModel.flow.collectLatest {
-                productsAdapters.submitData(it)
-            }
-        }
-//        viewLifecycleOwner.lifecycleScope.launch {
+//        productRv()
+//        lifecycleScope.launchWhenStarted {
+//            myFirebaseViewModel.flow.collectLatest {
 //
-//        }
-//        lifecycleScope.launch {
-//
+//                productsAdapters.submitData(it)
+//            }
 //        }
 
 
@@ -222,12 +210,12 @@ class MainCategoryFragment: Fragment(R.layout.fragment_main_category) {
 
 
 
-        bestProductsAdapter.onClick = { product ->
-            val b = Bundle().apply {
-                putParcelable("product",product)
-            }
-            findNavController().navigate(R.id.action_homeFragment_to_productDetailsFragment,b)
-        }
+//        bestProductsAdapter.onClick = { product ->
+//            val b = Bundle().apply {
+//                putParcelable("product",product)
+//            }
+//            findNavController().navigate(R.id.action_homeFragment_to_productDetailsFragment,b)
+//        }
 
         bestDealsAdapter.onClick = {product ->
             val b = Bundle().apply {
@@ -407,7 +395,17 @@ class MainCategoryFragment: Fragment(R.layout.fragment_main_category) {
 
 
     }
-
+//    private fun getSectionCallback(): StickyHeaderItemDecoration.SectionCallback {
+//        return object : StickyHeaderItemDecoration.SectionCallback {
+//            override fun isHeader(position: Int): Boolean {
+//                return binding.rvBestProducts.isHeader(position)
+//            }
+//
+//            override fun getHeaderLayoutView(list: RecyclerView, position: Int): View? {
+//                return binding.rvBestProducts.getHeaderView(list, position)
+//            }
+//        }
+//    }
     override fun onResume() {
         super.onResume()
         showBottomNavigationView()
@@ -421,12 +419,12 @@ class MainCategoryFragment: Fragment(R.layout.fragment_main_category) {
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
     }
 
-    private fun bestProductsRv() {
-        bestProductsAdapter = BestProductsAdapters()
-        binding.rvBestProducts.adapter = bestProductsAdapter
-        binding.rvBestProducts.layoutManager =
-            GridLayoutManager(requireContext(), 2, LinearLayoutManager.VERTICAL, false)
-    }
+//    private fun bestProductsRv() {
+//        bestProductsAdapter = BestProductsAdapters()
+//        binding.rvBestProducts.adapter = bestProductsAdapter
+//        binding.rvBestProducts.layoutManager =
+//            GridLayoutManager(requireContext(), 2, LinearLayoutManager.VERTICAL, false)
+//    }
 
     private fun temporarySpecialProductRv() {
         specialProductsAdapter = TemporarySpecialProductsAdapter()
@@ -435,13 +433,14 @@ class MainCategoryFragment: Fragment(R.layout.fragment_main_category) {
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
     }
 
-    private fun productRv() {
-        productsAdapters = ProductsAdapter()
-        binding.rvBestProducts.adapter = productsAdapters
-        binding.rvBestProducts.layoutManager =
-            GridLayoutManager(requireContext(), 2, LinearLayoutManager.VERTICAL, false)
-    }
+//    private fun productRv() {
+//        productsAdapters = ProductsAdapter()
+//        binding.rvBestProducts.adapter = productsAdapters
+//        binding.rvBestProducts.layoutManager =
+//            GridLayoutManager(requireContext(), 2, LinearLayoutManager.VERTICAL, false)
+//    }
     private fun myFirebaseStorageRv() {
+        myPagingDataAdapter = MyPagingDataAdapter()
         binding.rvBestProducts.adapter = myPagingDataAdapter
         binding.rvBestProducts.layoutManager =
             GridLayoutManager(requireContext(), 2, LinearLayoutManager.VERTICAL, false)

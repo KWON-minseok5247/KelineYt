@@ -65,7 +65,8 @@ class FirestorePagingSource (
             val lastVisibleProduct = currentPage.documents[currentPage.size() - 1]
             val nextPage = queryProductsByName.startAfter(lastVisibleProduct).get().await()
 
-            // TODO 얘가 왜 스크롤할 때가 아니라 시작하자마자 바로 실행이 되지? 해결해야 한다.
+
+            // TODO 얘가 왜 스크롤할 때가 아니라 시작하자마자 전부 바로 실행이 되지? 해결해야 한다.
             LoadResult.Page(
                 data = currentPage.toObjects(Product::class.java),
                 prevKey = null,

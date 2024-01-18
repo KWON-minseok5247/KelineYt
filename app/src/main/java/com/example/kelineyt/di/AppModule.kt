@@ -66,8 +66,7 @@ object AppModule {
     @Singleton
     fun provideQueryProductsByName() = FirebaseFirestore.getInstance()
         .collection(PRODUCTS_COLLECTION)
-//        .orderBy(NAME_PROPERTY, ASCENDING)
+//        .orderBy("pageNumber")
         .limit(PAGE_SIZE.toLong())
-
 
 }

@@ -15,44 +15,25 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.Query
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 @HiltViewModel
 class MyPagingViewModel @Inject constructor(
-    private val collectionReference: CollectionReference
+    private val queryProductsByName: Query
 ) : ViewModel() {
-//    val flow = Pager(
-//        PagingConfig( //// 예시: 한 번에 PAGE_SIZE 개의 아이템을 로드
-//            pageSize = MifareUltralight.PAGE_SIZE,
-//            enablePlaceholders = false  // 빈 자리 표시자 비활성화
-//        )
-//    ) {
-//        MyFirebasePagingSource(collectionReference)
-//    }.flow.cachedIn(viewModelScope)
-//    val pagingDataFlow: Flow<PagingData<Product>> = Pager(
-//        config = PagingConfig(pageSize = 20),
-//        pagingSourceFactory = { MyFirebasePagingSource(collectionReference) }
-//    ).flow
-// PagingData가 이미 페이지별로 구분된 형태를 제공해서 List<Product>로 만들 필요는 없다.
-//    val pagingDataFlow: Flow<PagingData<Product>> = Pager(
-//        config = PagingConfig(
-//            pageSize = 4,
-//        ),
-//        pagingSourceFactory = {
-//            val source = MyFirebasePagingSource(collectionReference)
-//            Log.d("PagingSourceFactory", "Created PagingSource: $source")
-//            source
-//        }
-//    ).flow
     val flow = Pager(
         PagingConfig(
-            pageSize = PAGE_SIZE
+            pageSize = PAGE_SIZE,
+//            prefetchDistance = 1,
+            enablePlaceholders = false,
+//            maxSize = PAGE_SIZE * 4 // Pager 가 메모리에 최대로 가지고 있을 수 있는 항목의 개수
+
         )
     ) {
-        MyFirebasePagingSource(collectionReference)
+        MyFirebasePagingSource(queryProductsByName)
     }.flow.cachedIn(viewModelScope)
-
-
 
 
 }

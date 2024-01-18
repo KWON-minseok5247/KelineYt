@@ -15,12 +15,32 @@ import com.example.kelineyt.databinding.ProductRvItemBinding
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
-class MyPagingDataAdapter : PagingDataAdapter<Product, MyPagingDataAdapter.MyPagingDataViewHolder>(YourDataComparator) {
+class MyPagingDataAdapter : PagingDataAdapter<Product, MyPagingDataAdapter.ProductViewHolder>(diffCallback) {
 
-    inner class MyPagingDataViewHolder(
-        private val binding: ProductRvItemBinding
-    ) : RecyclerView.ViewHolder(binding.root) {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductViewHolder {
+        val binding = ProductRvItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return ProductViewHolder(binding)
+    }
+
+    override fun onBindViewHolder(holder: ProductViewHolder, position: Int) {
+        getItem(position)?.let { holder.bind(it) }
+    }
+
+    companion object {
+        private val diffCallback = object : DiffUtil.ItemCallback<Product>() {
+            override fun areItemsTheSame(oldItem: Product, newItem: Product): Boolean {
+                return oldItem.id == newItem.id
+            }
+
+            override fun areContentsTheSame(oldItem: Product, newItem: Product): Boolean {
+                return oldItem == newItem
+            }
+        }
+    }
+
+    class ProductViewHolder(private val binding: ProductRvItemBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(product: Product) {
+// 아이템에 대한 바인딩 코드 추가
             Glide.with(itemView).load(product.images[0]).into(binding.bestProductsImgProduct)
             binding.apply {
                 bestProductsTvName.text = product.name
@@ -32,37 +52,9 @@ class MyPagingDataAdapter : PagingDataAdapter<Product, MyPagingDataAdapter.MyPag
                     bestProductsTvNewPrice.visibility = View.INVISIBLE
                 }
             }
+// 나머지 필요한 UI 요소들에 대한 바인딩 코드 추가
         }
-    }    // RecyclerView에서 ViewHolder 생성
-    override fun onBindViewHolder(holder: MyPagingDataViewHolder, position: Int) {
-
-        val product = getItem(position)
-//        val item = getItem(position)
-//        if (item != null) {
-            holder.bind(product!!)
-//        }
     }
 
-    // ViewHolder 생성
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyPagingDataAdapter.MyPagingDataViewHolder {
-        val layoutInflater = LayoutInflater.from(parent.context)
-        val dataBinding = ProductRvItemBinding.inflate(
-            layoutInflater,
-            parent,
-            false
-        )
-        return MyPagingDataViewHolder(dataBinding)
-    }
-}
 
-object YourDataComparator : DiffUtil.ItemCallback<Product>() {
-    override fun areItemsTheSame(oldItem: Product, newItem: Product): Boolean {
-        // 아이템이 같은지 여부 반환
-        return oldItem.id == newItem.id
-    }
-
-    override fun areContentsTheSame(oldItem: Product, newItem: Product): Boolean {
-        // 아이템 내용이 같은지 여부 반환
-        return oldItem == newItem
-    }
 }
