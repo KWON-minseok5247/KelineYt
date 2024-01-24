@@ -5,9 +5,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.kelineyt.data.Product
 import com.example.kelineyt.databinding.ProductRvItemBinding
+import com.example.kelineyt.paging.viewholder.data.BestProductItems
 
 class BestProductViewHolder(private val binding: ProductRvItemBinding) : RecyclerView.ViewHolder(binding.root) {
-    fun bind(product: Product) {
+    fun bind(producted: BestProductItems) {
+        val product = producted.bestProduct
 // 아이템에 대한 바인딩 코드 추가
         Glide.with(itemView).load(product.images[0]).into(binding.bestProductsImgProduct)
         binding.apply {

@@ -5,9 +5,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.kelineyt.data.Product
 import com.example.kelineyt.databinding.BestDealsRvItemBinding
+import com.example.kelineyt.paging.viewholder.data.BestDealsItems
 
 class PagingBestDealsViewHolder(private val binding: BestDealsRvItemBinding): RecyclerView.ViewHolder(binding.root) {
-    fun bind(product: Product){
+    fun bind(producted: BestDealsItems){
+        val product = producted.bestDeals
         binding.apply {
             Glide.with(itemView).load(product.images[0]).into(imgBestDeal)
             tvDealProductName.text = product.name

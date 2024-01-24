@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.kelineyt.R
 import com.example.kelineyt.data.Product
 import com.example.kelineyt.databinding.SpecialRvItemBinding
 
@@ -18,7 +19,8 @@ class TemporarySpecialProductsAdapter: RecyclerView.Adapter<TemporarySpecialProd
             Glide.with(itemView).load(image).into(binding.ImageSpecialRvItem)
             binding.apply {
                 tvSpecialProductName.text = product.name
-                tvSpecialProductPrice.text = product.price.toString()
+                tvSpecialProductPrice.text = "$ ${String.format("%.2f", product.price)}"
+
             }
         }
     }
@@ -58,5 +60,7 @@ class TemporarySpecialProductsAdapter: RecyclerView.Adapter<TemporarySpecialProd
     }
     var onClick : ((Product) -> Unit)? = null
 
-
+    override fun getItemViewType(position: Int): Int {
+        return R.layout.special_rv_item
+    }
 }

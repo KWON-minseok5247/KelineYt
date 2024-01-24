@@ -4,33 +4,44 @@ package com.example.kelineyt.paging
 import android.content.Context
 import android.util.AttributeSet
 import androidx.core.widget.NestedScrollView
+import androidx.recyclerview.widget.RecyclerView
+import android.view.View
+import android.view.ViewGroup
 
+open class SmartNestedScrollView(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : NestedScrollView(context, attrs, defStyleAttr) {
 
-class SmartNestedScrollView : NestedScrollView {
-    constructor(context: Context?) : super(context!!) {}
-    constructor(context: Context?, attrs: AttributeSet?) : super(
-        context!!, attrs
-    ) {
-    }
+    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
 
-    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(
-        context!!, attrs, defStyleAttr
-    ) {
-    }
+    constructor(context: Context) : this(context, null)
 
-    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-        val height = measuredHeight
-        val childCount = childCount
-        var heightNeededToDisplayAllChildren = 0
-        var shouldScroll = false
-        for (i in 0 until childCount) {
-            heightNeededToDisplayAllChildren += getChildAt(i).height
-            if (heightNeededToDisplayAllChildren > height) {
-                shouldScroll = true
-                break // no need to go through all the children once the
-            }
+    override fun measureChildWithMargins(child: View?, parentWidthMeasureSpec: Int, widthUsed: Int, parentHeightMeasureSpec: Int, heightUsed: Int) {
+        if (findNestedRecyclerView(child) != null) {
+            val lp = child?.layoutParams as ViewGroup.MarginLayoutParams
+            val childHeightMeasureSpec = View.MeasureSpec.makeMeasureSpec(
+                lp.topMargin + lp.bottomMargin, View.MeasureSpec.AT_MOST)
+            child.measure(parentWidthMeasureSpec, childHeightMeasureSpec)
+        } else {
+            super.measureChildWithMargins(child, parentWidthMeasureSpec, widthUsed, parentHeightMeasureSpec, heightUsed)
         }
-        isNestedScrollingEnabled = shouldScroll
+    }
+
+    private fun findNestedRecyclerView(view: View?): RecyclerView? {
+        when (view) {
+            is RecyclerView -> return view
+            is ViewGroup -> {
+                var index = 0
+                do {
+                    val child = view.getChildAt(index)
+                    val recyclerView = findNestedRecyclerView(child)
+                    if (recyclerView == null) {
+                        index += 1
+                    } else {
+                        return recyclerView
+                    }
+                } while (index < view.childCount)
+            }
+            else -> return null
+        }
+        return null
     }
 }

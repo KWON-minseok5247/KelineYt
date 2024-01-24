@@ -7,9 +7,11 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.kelineyt.R
 import com.example.kelineyt.data.Product
 import com.example.kelineyt.databinding.BestDealsRvItemBinding
 import com.example.kelineyt.databinding.SpecialRvItemBinding
+
 // Adapter는 데이터 리스트를 실제 눈으로 볼 수 있게 itemView로 변환하는 중간다리 역할을 한다.
 
 //Adapter가 맡은 역할은 크게 아래의 세가지로 나눌 수 있다.
@@ -57,6 +59,9 @@ class BestDealsAdapter: RecyclerView.Adapter<BestDealsAdapter.BestDealsViewHolde
     val differ = AsyncListDiffer(this, diffCallback)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BestDealsViewHolder {
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.best_deals_rv_item,parent,false)
+
+//        view.vertical
         return BestDealsViewHolder(
             BestDealsRvItemBinding.inflate(
                 LayoutInflater.from(parent.context), parent, false
@@ -79,5 +84,7 @@ class BestDealsAdapter: RecyclerView.Adapter<BestDealsAdapter.BestDealsViewHolde
         return differ.currentList.size
     }
     var onClick: ((Product) -> Unit)? = null
-
+    override fun getItemViewType(position: Int): Int {
+        return R.layout.best_deals_rv_item
+    }
 }

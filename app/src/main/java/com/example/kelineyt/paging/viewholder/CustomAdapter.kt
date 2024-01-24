@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.kelineyt.R
 import com.example.kelineyt.data.Product
@@ -61,11 +62,12 @@ class CustomAdapter(
             }
             R.layout.best_deals_rv_item -> {
                 val data = items[position].data as BestDealsItems
-//                (holder as PagingBestDealsViewHolder).bind(data)
+                (holder as PagingBestDealsViewHolder).bind(data)
             }
             R.layout.product_rv_item -> {
+                val layoutManager = LinearLayoutManager(holder.itemView.context, LinearLayoutManager.HORIZONTAL, false)
                 val data = items[position].data as BestProductItems
-//                (holder as BestProductViewHolder).bind(data)
+                (holder as BestProductViewHolder).bind(data)
             }
             R.layout.special_rv_item -> {
                 // 여기서 data가

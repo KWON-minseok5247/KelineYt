@@ -1,4 +1,5 @@
 package com.example.kelineyt.paging
+import android.graphics.Paint
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +11,7 @@ import androidx.paging.PagingData
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.kelineyt.R
 import com.example.kelineyt.data.Product
 import com.example.kelineyt.databinding.ProductRvItemBinding
 import kotlinx.coroutines.flow.Flow
@@ -23,8 +25,20 @@ class MyPagingDataAdapter : PagingDataAdapter<Product, MyPagingDataAdapter.Produ
     }
 
     override fun onBindViewHolder(holder: ProductViewHolder, position: Int) {
-        getItem(position)?.let { holder.bind(it) }
+        val product = getItem(position)
+
+        product?.let { holder.bind(it) }
+
+        holder.itemView.setOnClickListener {
+            onClick?.invoke(product!!)
+
+        }
     }
+    override fun getItemViewType(position: Int): Int {
+        return R.layout.product_rv_item
+    }
+    var onClick: ((Product) -> Unit)? = null
+
 
     companion object {
         private val diffCallback = object : DiffUtil.ItemCallback<Product>() {
@@ -44,10 +58,15 @@ class MyPagingDataAdapter : PagingDataAdapter<Product, MyPagingDataAdapter.Produ
             Glide.with(itemView).load(product.images[0]).into(binding.bestProductsImgProduct)
             binding.apply {
                 bestProductsTvName.text = product.name
-                bestProductsTvPrice.text = product.price.toString()
+                bestProductsTvPrice.text = "$ ${String.format("%.2f", product.price)}"
+
+//                bestProductsTvPrice.text = product.price.toString()
                 if (product.offerPercentage != null) {
                     bestProductsTvNewPrice.text =
-                        (product.price * (1 - product.offerPercentage)).toString()
+                        "$ ${String.format("%.2f", product.price * (1 - product.offerPercentage))}"
+
+                    bestProductsTvPrice.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
+
                 } else {
                     bestProductsTvNewPrice.visibility = View.INVISIBLE
                 }
