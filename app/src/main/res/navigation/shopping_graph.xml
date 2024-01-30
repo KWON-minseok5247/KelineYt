@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/shopping_graph"
-    app:startDestination="@id/homeFragment">
+    app:startDestination="@id/searchFragment">
 
     <fragment
         android:id="@+id/cartFragment"
@@ -12,7 +12,8 @@
         tools:layout="@layout/fragment_cart">
         <action
             android:id="@+id/action_cartFragment_to_productDetailsFragment"
-            app:destination="@id/productDetailsFragment" />
+            app:destination="@id/productDetailsFragment"
+            />
         <action
             android:id="@+id/action_cartFragment_to_billingFragment"
             app:destination="@id/billingFragment" />
@@ -24,6 +25,7 @@
         tools:layout="@layout/fragment_search">
         <action
             android:id="@+id/action_searchFragment_to_productDetailsFragment"
+
             app:destination="@id/productDetailsFragment" />
     </fragment>
     <fragment

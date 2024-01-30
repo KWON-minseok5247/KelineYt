@@ -2,16 +2,21 @@ package com.example.kelineyt.activities
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavOptions
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.kelineyt.R
 import com.example.kelineyt.databinding.ActivityShoppingBinding
+import com.example.kelineyt.fragments.categories.MainCategoryFragment
+import com.example.kelineyt.fragments.shopping.CartFragment
+import com.example.kelineyt.fragments.shopping.HomeFragment
+import com.example.kelineyt.fragments.shopping.ProfileFragment
+import com.example.kelineyt.fragments.shopping.SearchFragment
 import com.example.kelineyt.util.Resource
 import com.example.kelineyt.viewmodel.CartViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -21,10 +26,12 @@ import kotlinx.coroutines.flow.collectLatest
 @AndroidEntryPoint
 class ShoppingActivity : AppCompatActivity() {
 
-    private val TAG_HOME_FRAGMENT = "home_fragment"
-    private val TAG_RECORDS_FRAGMENT = "records_fragment"
-    private val TAG_COMMUNITY_FRAGMENT = "community_fragment"
-    private val TAG_CAMPAIGN_FRAGMENT = "campaign_fragment"
+    private val TAG_MAINCATEGORY_FRAGMENT = "main_category_fragment"
+    private val TAG_SEARCH_FRAGMENT = "search_fragment"
+    private val TAG_CART_FRAGMENT = "cart_fragment"
+    private val TAG_PROFILE_FRAGMENT = "profile_fragment"
+
+    private lateinit var fragmentManager: FragmentManager
 
     val binding by lazy {
         ActivityShoppingBinding.inflate(layoutInflater)
@@ -37,42 +44,67 @@ class ShoppingActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        // 아래 이것들로 인해 프래그먼트가 움직인다?
-        val navController = findNavController(R.id.shoppingHostFragment)
-        binding.bottomNavigation.setupWithNavController(navController)
+        val navOptions = NavOptions.Builder()
+            .setLaunchSingleTop(true) // 현재 화면이 이미 스택에 있으면 해당 화면을 재사용
+            .build()
 
-//
-//        setFragment(TAG_HOME_FRAGMENT, HomeFragment())
+//        fragmentManager = supportFragmentManager
+//        if (savedInstanceState == null) {
+//            // 초기 화면 설정
+//            showFragment(HomeFragment())
+//        }
 //
 //        binding.bottomNavigation.setOnNavigationItemSelectedListener { item ->
 //            when (item.itemId) {
-//                R.id.navigation_home -> setFragment(TAG_HOME_FRAGMENT, HomeFragment())
-//                R.id.navigation_records -> setFragment(TAG_RECORDS_FRAGMENT, RecordsFragment())
-//                R.id.navigation_community -> setFragment(
-//                    TAG_COMMUNITY_FRAGMENT,
-//                    CommunityFragment()
+//                R.id.homeFragment -> showFragment(HomeFragment())
+//                R.id.searchFragment -> showFragment(SearchFragment())
+//                R.id.cartFragment -> showFragment(
+//                    CartFragment()
 //                )
-//                R.id.navigation_campaign -> setFragment(TAG_CAMPAIGN_FRAGMENT, CampaignFragment())
+//                R.id.profileFragment -> showFragment(ProfileFragment())
 //            }
 //
 //            true
 //        }
 
-//        lifecycleScope.launchWhenCreated {
-//            viewModel.cartProducts.collectLatest {
-//                when(it) {
-//                    is Resource.Success -> {
-//                        val count = it.data?.size ?: 0
-//                        val bottomNavigation = findViewById<BottomNavigationView>(R.id.bottomNavigation)
-//                        bottomNavigation.getOrCreateBadge(R.id.cartFragment).apply {
-//                            number = count
-//                            backgroundColor = resources.getColor(R.color.g_blue)
-//                        }
-//                    }
-//                    else -> Unit
-//                }
-//            }
+        // 아래 이것들로 인해 프래그먼트가 움직인다?
+        val navController = findNavController(R.id.shoppingHostFragment)
+        binding.bottomNavigation.setupWithNavController(navController)
+
+//        if (savedInstanceState == null) {
+//            // 초기 화면 설정
+//            setFragment(TAG_MAINCATEGORY_FRAGMENT, HomeFragment())
 //        }
+//
+//        binding.bottomNavigation.setOnNavigationItemSelectedListener { item ->
+//            when (item.itemId) {
+//                R.id.homeFragment -> setFragment(TAG_MAINCATEGORY_FRAGMENT, HomeFragment())
+//                R.id.searchFragment -> setFragment(TAG_SEARCH_FRAGMENT, SearchFragment())
+//                R.id.cartFragment -> setFragment(
+//                    TAG_CART_FRAGMENT,
+//                    CartFragment()
+//                )
+//                R.id.profileFragment -> setFragment(TAG_PROFILE_FRAGMENT, ProfileFragment())
+//            }
+//
+//            true
+//        }
+
+        lifecycleScope.launchWhenCreated {
+            viewModel.cartProducts.collectLatest {
+                when(it) {
+                    is Resource.Success -> {
+                        val count = it.data?.size ?: 0
+                        val bottomNavigation = findViewById<BottomNavigationView>(R.id.bottomNavigation)
+                        bottomNavigation.getOrCreateBadge(R.id.cartFragment).apply {
+                            number = count
+                            backgroundColor = resources.getColor(R.color.g_blue)
+                        }
+                    }
+                    else -> Unit
+                }
+            }
+        }
         lifecycleScope.launchWhenCreated {
             viewModel.cartProducts.collectLatest {
                 when (it) {
@@ -98,57 +130,67 @@ class ShoppingActivity : AppCompatActivity() {
             }
         }
 
+
     }
-//
-//    private fun setFragment(tag: String, fragment: Fragment) {
-//        val manager: FragmentManager = supportFragmentManager
-//        val ft: FragmentTransaction = manager.beginTransaction()
-//
-//        if (manager.findFragmentByTag(tag) == null) {
-//            ft.add(R.id.nav_fragment, fragment, tag)
-//        }
-//
-//        val home = manager.findFragmentByTag(TAG_HOME_FRAGMENT)
-//        val records = manager.findFragmentByTag(TAG_RECORDS_FRAGMENT)
-//        val community = manager.findFragmentByTag(TAG_COMMUNITY_FRAGMENT)
-//        val campaign = manager.findFragmentByTag(TAG_CAMPAIGN_FRAGMENT)
-//
-//        // Hide all Fragment
-//        if (home != null) {
-//            ft.hide(home)
-//        }
-//        if (records != null) {
-//            ft.hide(records)
-//        }
-//        if (community != null) {
-//            ft.hide(community)
-//        }
-//        if (campaign != null) {
-//            ft.hide(campaign)
-//        }
-//
-//        // Show  current Fragment
-//        if (tag == TAG_HOME_FRAGMENT) {
-//            if (home != null) {
-//                ft.show(home)
-//            }
-//        }
-//        if (tag == TAG_RECORDS_FRAGMENT) {
-//            if (records != null) {
-//                ft.show(records)
-//            }
-//        }
-//        if (tag == TAG_COMMUNITY_FRAGMENT) {
-//            if (community != null) {
-//                ft.show(community)
-//            }
-//        }
-//        if (tag == TAG_CAMPAIGN_FRAGMENT) {
-//            if (campaign != null) {
-//                ft.show(campaign)
-//            }
-//        }
-//
-//        ft.commitAllowingStateLoss()
-//    }
+
+    private fun showFragment(fragment: Fragment) {
+        val transaction = fragmentManager.beginTransaction()
+        transaction.replace(R.id.shoppingHostFragment, fragment)
+//        transaction.addToBackStack(null)
+        transaction.commit()
+    }
+
+
+
+    private fun setFragment(tag: String, fragment: Fragment) {
+        val manager: FragmentManager = supportFragmentManager
+        val ft: FragmentTransaction = manager.beginTransaction()
+
+        if (manager.findFragmentByTag(tag) == null) {
+            ft.add(R.id.shoppingHostFragment, fragment, tag)
+        }
+
+        val home = manager.findFragmentByTag(TAG_MAINCATEGORY_FRAGMENT)
+        val records = manager.findFragmentByTag(TAG_SEARCH_FRAGMENT)
+        val community = manager.findFragmentByTag(TAG_CART_FRAGMENT)
+        val campaign = manager.findFragmentByTag(TAG_PROFILE_FRAGMENT)
+
+        // Hide all Fragment
+        if (home != null) {
+            ft.hide(home)
+        }
+        if (records != null) {
+            ft.hide(records)
+        }
+        if (community != null) {
+            ft.hide(community)
+        }
+        if (campaign != null) {
+            ft.hide(campaign)
+        }
+
+        // Show  current Fragment
+        if (tag == TAG_MAINCATEGORY_FRAGMENT) {
+            if (home != null) {
+                ft.show(home)
+            }
+        }
+        if (tag == TAG_SEARCH_FRAGMENT) {
+            if (records != null) {
+                ft.show(records)
+            }
+        }
+        if (tag == TAG_CART_FRAGMENT) {
+            if (community != null) {
+                ft.show(community)
+            }
+        }
+        if (tag == TAG_PROFILE_FRAGMENT) {
+            if (campaign != null) {
+                ft.show(campaign)
+            }
+        }
+
+        ft.commitAllowingStateLoss()
+    }
 }

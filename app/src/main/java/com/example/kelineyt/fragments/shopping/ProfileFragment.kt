@@ -53,7 +53,6 @@ class ProfileFragment: Fragment() {
                 when (it) {
                     is Resource.Loading -> {
                         showProgressBar()
-
                     }
                     is Resource.Success -> {
                         hideProgressBar()

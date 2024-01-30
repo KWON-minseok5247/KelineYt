@@ -22,7 +22,6 @@ import com.example.kelineyt.R
 import com.example.kelineyt.data.CartProduct
 import com.example.kelineyt.databinding.CartProductItemBinding
 import com.example.kelineyt.fragments.makeIt.ProductDetailsFragments
-import com.example.kelineyt.fragments.makeIt.ProductDetailsFragmentsArgs
 import java.io.ByteArrayOutputStream
 
 class CartProductAdapters: RecyclerView.Adapter<CartProductAdapters.CartProductViewHolders>() {

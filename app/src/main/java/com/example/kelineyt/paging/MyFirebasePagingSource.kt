@@ -7,6 +7,7 @@ import com.example.kelineyt.util.Constants.PAGE_SIZE
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.tasks.await
 
 class MyFirebasePagingSource(private val queryProductsByName: Query) :
@@ -16,6 +17,7 @@ class MyFirebasePagingSource(private val queryProductsByName: Query) :
     }
 
     override suspend fun load(params: LoadParams<QuerySnapshot>): LoadResult<QuerySnapshot, Product> {
+        delay(2000)
         return try {
             Log.e("log가 실행되었다", "이론상 5번 정도")
             val currentPage = params.key ?: queryProductsByName.get().await()

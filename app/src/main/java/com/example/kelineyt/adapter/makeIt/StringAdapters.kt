@@ -14,7 +14,9 @@ import com.example.kelineyt.databinding.OrderItemBinding
 import com.example.kelineyt.databinding.StringRvBinding
 
 class StringAdapters(private val string: String) : RecyclerView.Adapter<StringAdapters.StringViewHolder>() {
-
+    companion object {
+        const val VIEW_TYPE = 8888
+    }
     inner class StringViewHolder(private val binding: StringRvBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(string: String) {
