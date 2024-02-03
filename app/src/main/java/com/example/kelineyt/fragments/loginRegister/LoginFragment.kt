@@ -56,8 +56,8 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                 viewModel.login(email, password)
             }
         }
-        binding.tvForgotPasswordLogin.setOnClickListener {
 
+        binding.tvForgotPasswordLogin.setOnClickListener {
             setupBottomSheetDialog { email ->
                 if (!email.isNullOrEmpty()) {
                     viewModel.resetPasswordFun(email)

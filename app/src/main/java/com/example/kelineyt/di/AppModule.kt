@@ -8,6 +8,8 @@ import com.example.kelineyt.util.Constants.NAME_PROPERTY
 import com.example.kelineyt.util.Constants.PAGE_SIZE
 import com.example.kelineyt.util.Constants.PRODUCTS_COLLECTION
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ktx.database
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -29,6 +31,11 @@ object AppModule {
     @Provides
     @Singleton // 여기저기 호출하고 다니지만 사실상 1개를 돌려쓰는 중임...
     fun provideFirebaseAuth() = FirebaseAuth.getInstance()
+
+    @Provides
+    @Singleton // 여기저기 호출하고 다니지만 사실상 1개를 돌려쓰는 중임...
+    fun provideFirebaseDB() = FirebaseDatabase.getInstance().reference
+
 
     @Provides
     @Singleton
@@ -68,5 +75,6 @@ object AppModule {
         .collection(PRODUCTS_COLLECTION)
 //        .orderBy("pageNumber")
         .limit(PAGE_SIZE.toLong())
+
 
 }

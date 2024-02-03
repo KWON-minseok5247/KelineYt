@@ -70,6 +70,9 @@ class ProfileFragment: Fragment() {
         binding.linearAllOrders.setOnClickListener {
             findNavController().navigate(R.id.action_profileFragment_to_allOrdersFragment)
         }
+        binding.linearChat.setOnClickListener {
+            findNavController().navigate(R.id.action_profileFragment_to_chatFragment)
+        }
 
         binding.logout.setOnClickListener {
             viewModel.logout()

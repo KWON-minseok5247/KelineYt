@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/shopping_graph"
-    app:startDestination="@id/searchFragment">
+    app:startDestination="@id/homeFragment">
 
     <fragment
         android:id="@+id/cartFragment"
@@ -51,6 +51,9 @@
         <action
             android:id="@+id/action_profileFragment_to_billingFragment"
             app:destination="@id/billingFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_chatFragment"
+            app:destination="@id/chatFragment" />
     </fragment>
     <fragment
         android:id="@+id/productDetailsFragment"
@@ -117,4 +120,10 @@
             android:name="order"
             app:argType="com.example.kelineyt.data.order.Order" />
     </fragment>
+    <fragment
+        android:id="@+id/chatFragment"
+        android:name="com.example.kelineyt.adapter.chat.ChatFragment"
+        android:label="ChatFragment"
+        tools:layout="@layout/fragment_chat"/>
+
 </navigation>
