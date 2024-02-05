@@ -29,7 +29,7 @@
                 android:layout_toLeftOf="@+id/sendButton"
                 android:layout_toStartOf="@+id/sendButton"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/sendButton"
                 app:layout_constraintBottom_toBottomOf="parent"
                 android:hint="Type a message..."
                 android:inputType="textMultiLine"
