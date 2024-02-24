@@ -50,7 +50,20 @@ class ChatViewModel @Inject constructor(
         _messageList.value = currentList
         Log.e("_messageList", _messageList.toString())
     }
+    fun deleteMessages() {
+        val chatDatabaseReference = database.child("messages").child(auth.uid!!)
+// 채팅 내역 삭제
+        chatDatabaseReference.removeValue()
+            .addOnSuccessListener {
+                // 삭제 성공 시
+                Log.d(TAG, "Chat history deleted successfully.")
+            }
+            .addOnFailureListener { exception ->
+                // 삭제 실패 시
+                Log.e(TAG, "Failed to delete chat history: $exception")
+            }
 
+    }
     // 네트워크로부터 메시지를 읽어오는 메서드
     private fun readMessages() {
             val chatDatabaseReference = database.child("messages").child(auth.uid!!)

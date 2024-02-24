@@ -1,5 +1,6 @@
 package com.example.kelineyt.adapter.chat
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -70,9 +71,11 @@ import dagger.hilt.android.AndroidEntryPoint
 //}
 
 import android.widget.EditText
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment.STYLE_NO_FRAME
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.kelineyt.util.hideBottomNavigationView
 import com.example.kelineyt.util.showBottomNavigationView
@@ -84,7 +87,8 @@ import com.google.firebase.database.*
 private val TAG = "ChatFragment"
 @AndroidEntryPoint
 class ChatFragment : Fragment() {
-
+init {
+}
 //    private lateinit var messageEditText: EditText
 //    private lateinit var sendButton: Button
     private lateinit var binding: FragmentChatBinding
@@ -104,12 +108,13 @@ class ChatFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        showMyDialog()
 //        messageEditText = view.findViewById(R.id.messageEditText)
 //        sendButton = view.findViewById(R.id.sendButton)
 //
 //        database = FirebaseDatabase.getInstance().reference.child("messages").child("aa")
 //        auth = FirebaseAuth.getInstance()
+
+        showMyDialog()
 
         chatMessageRv()
         // 이전에 작성된 모든 메시지를 가져오기
@@ -123,24 +128,20 @@ class ChatFragment : Fragment() {
             binding.messageListView.smoothScrollToPosition(messages.size - 1)
         })
 
-//        database.addListenerForSingleValueEvent(object : ValueEventListener {
-//            override fun onDataChange(snapshot: DataSnapshot) {
-//                val messages = mutableListOf<Message>()
-//                for (childSnapshot in snapshot.children) {
-//                    val message = childSnapshot.getValue(Message::class.java)
-//                    if (message != null) {
-//                        messages.add(message)
-//                    }
-//                }
-//                adapter.differ.submitList(messages)
-//            }
-//
-//            override fun onCancelled(error: DatabaseError) {
-//                // Handle error if needed
-//                Log.w(TAG, "Failed to read value.", error.toException())
-//            }
-//        })
-
+        binding.imageClose.setOnClickListener {
+            val builder = AlertDialog.Builder(requireContext())
+            builder.setTitle("채팅방을 나갑니다.")
+                .setMessage("정말 삭제하시겠습니까?")
+                .setPositiveButton("확인",
+                    DialogInterface.OnClickListener { dialog, id ->
+                        viewModel.deleteMessages()
+                        findNavController().navigateUp()
+                    })
+                .setNegativeButton("취소",
+                    DialogInterface.OnClickListener { dialog, id ->
+                    })
+            builder.show()
+        }
 
         binding.sendButton.setOnClickListener {
 

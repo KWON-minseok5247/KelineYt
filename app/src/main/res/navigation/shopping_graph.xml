@@ -125,5 +125,9 @@
         android:name="com.example.kelineyt.adapter.chat.ChatFragment"
         android:label="ChatFragment"
         tools:layout="@layout/fragment_chat"/>
+    <activity
+        android:id="@+id/composeTestActivity"
+        android:name="com.example.kelineyt.activities.ComposeTestActivity"
+        android:label="ComposeTestActivity" />
 
 </navigation>

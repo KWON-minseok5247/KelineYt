@@ -3,11 +3,11 @@ package com.example.kelineyt.data
 import android.os.Parcelable
 import java.io.Serializable
 
-data class ChatRoom(
-    val users: Map<String, Boolean>? = HashMap(),
-    var messages: Map<String,Message>? = HashMap()
-) : Serializable {
-}
+//data class ChatRoom(
+//    val users: Map<String, Boolean>? = HashMap(),
+//    var messages: Map<String,Message>? = HashMap()
+//) : Serializable {
+//}
 //채팅방의 정보를 저장하는 ChatRoom 객체이다.
 //
 //Firebase RealtimeDatabase는 JSON 형태로 데이터를 저장하기 떄문에,
